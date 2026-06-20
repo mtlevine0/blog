@@ -1,43 +1,51 @@
 # blog.mtlevine0.com
 
-Personal blog built with Jekyll, hosted on GitHub Pages at [blog.mtlevine0.com](https://blog.mtlevine0.com).
+Personal blog built with Hugo + PaperMod, hosted on GitHub Pages at [blog.mtlevine0.com](https://blog.mtlevine0.com).
 
-## Run locally
+## Prerequisites
 
 ```bash
-bundle install
-bundle exec jekyll serve
+brew install hugo
 ```
 
-Then visit `http://localhost:4000`.
+## Local development
+
+```bash
+git clone --recurse-submodules https://github.com/mtlevine0/blog.git
+cd blog
+hugo server -D
+```
+
+Then visit `http://localhost:1313`. The server live-reloads on file changes.
+
+If you already cloned without submodules:
+
+```bash
+git submodule update --init --recursive
+```
 
 ## Writing a post
 
-Create a file in `_posts/` named `YYYY-MM-DD-slug.md` with front matter:
+```bash
+hugo new content posts/YYYY-MM-DD-my-title.md
+```
 
-```markdown
+Edit the generated file in `content/posts/`, set `draft: false`, then push:
+
+```bash
+git add . && git commit -m "add post: title" && git push
+```
+
+GitHub Actions builds and deploys to GitHub Pages automatically (~1 min).
+
+## Front matter reference
+
+```yaml
 ---
-layout: post
 title: "Post Title"
 date: YYYY-MM-DD
-tags: [tag1, tag2]
+draft: false
+tags: ["tag1", "tag2"]
+description: "Optional summary shown in post list"
 ---
-
-Post content here.
 ```
-
-Push to `main` — GitHub Pages rebuilds the site automatically in ~30 seconds.
-
-## Images
-
-Store images in `assets/images/` and reference them with:
-
-```markdown
-![Alt text](/assets/images/filename.jpg)
-```
-
-For a media-heavy blog, host images on a CDN and link to them to keep the repo lean.
-
-## Embedding video
-
-Paste YouTube/Vimeo iframe embed code directly into any Markdown post — Jekyll passes raw HTML through unchanged.
