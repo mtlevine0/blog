@@ -1,9 +1,0 @@
-title: "Matt Levine's Blog"
-description: "Personal blog"
-url: "https://blog.mtlevine0.com"
-baseurl: ""
-author: mtlevine0
-theme: minima
-plugins:
-  - jekyll-feed
-  - jekyll-seo-tag
