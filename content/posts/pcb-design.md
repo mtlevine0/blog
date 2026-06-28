@@ -1,5 +1,5 @@
 ---
-title: "My First PCB: A Wireless Christmas Bell Choir"
+title: "My Introduction to PCB Design"
 date: 2026-06-20
 draft: false
 tags: ["hardware", "esp32", "kicad", "pcb", "oshpark", "christmas", "music"]
@@ -16,6 +16,8 @@ It did. Here's the result:
 The bell units take a ROM cartridge that contains the song data. The idea was to replace the cartridge with a custom PCB that receives wireless note data, so any number of units can play the same notes at the same time, turning soloists into a choir.
 
 A single transmitter broadcasts over ESP-NOW. Receivers in the bell units pick it up and play in sync, with no pairing or per-device configuration needed.
+
+Pictured below is an initial test-bench set up and prototyping interfacing an EPS32 with the bells hardware.  The interface is trivial, the edge card connector is meant to mate with a ROM cartridge and provides +5v, GND, and a single pin per bell.  Apply +5v to a bell pin and the bells solenoid activates until you remove power.
 
 ![Ye Merrie Minstrel Caroling Christmas Bells](/images/pcb-design/test-bench.jpg)
 
@@ -35,6 +37,7 @@ I ordered the boards through [OSH Park](https://oshpark.com), which was a natura
 
 The boards came back clean. Soldering the ESP32 and a handful of passives was straightforward, and the edge connector seated perfectly.
 
+![PCB Close Up](/images/pcb-design/esp32_bells_module.JPG)
 ![Assembled PCB](https://github.com/mtlevine0/merrie-minstrel-choir/raw/main/docs/assembled.JPG)
 
 ## The Firmware
