@@ -1,0 +1,5 @@
+{{- if hugo.IsProduction | or (eq site.Params.env "production") }}
+<!-- Cloudflare Web Analytics -->
+<script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "96ad923b9bc34897b9345d705e0d8472"}'></script>
+<!-- End Cloudflare Web Analytics -->
+{{- end }}
