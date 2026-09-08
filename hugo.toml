@@ -36,3 +36,7 @@ buildDrafts = false
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
+
+[services]
+  [services.googleAnalytics]
+    ID = "G-G0CJKEH8G4"
