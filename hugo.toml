@@ -16,10 +16,6 @@ buildDrafts = false
   ShowCodeCopyButtons = true
   ShowRssButtonInSectionTermList = true
 
-[params.homeInfoParams]
-  Title = "Hi, I'm Matt"
-  Content = "Welcome to my blog."
-
 [[params.socialIcons]]
   name = "github"
   url = "https://github.com/mtlevine0"
