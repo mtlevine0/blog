@@ -24,6 +24,13 @@ If you already cloned without submodules:
 git submodule update --init --recursive
 ```
 
+Enable the pre-commit hook that strips EXIF/GPS metadata from staged images (one-time per clone; requires Python 3 + Pillow):
+
+```bash
+git config core.hooksPath .githooks
+pip install Pillow
+```
+
 ## Writing a post
 
 ```bash

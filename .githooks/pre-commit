@@ -1,0 +1,147 @@
+#!/usr/bin/env python3
+"""
+pre-commit hook: strip EXIF/XMP/IPTC metadata from staged images.
+
+Rewrites JPEG/PNG/WEBP/TIFF files in the git index (not necessarily the
+working tree) so committed images never carry camera make/model, GPS
+coordinates, timestamps, or other embedded metadata. Pixel data is left
+untouched; JPEGs are metadata-stripped without recompression (quality="keep")
+so there's no generation loss.
+
+Installed via:
+    git config core.hooksPath .githooks
+(run once per clone -- core.hooksPath is a local config, not tracked by git)
+"""
+import io
+import subprocess
+import sys
+
+try:
+    from PIL import Image
+except ImportError:
+    print("pre-commit: Pillow not installed (pip install Pillow) -- skipping EXIF strip", file=sys.stderr)
+    sys.exit(0)
+
+IMAGE_EXTS = (".jpg", ".jpeg", ".png", ".webp", ".tif", ".tiff")
+
+
+def run(*args):
+    return subprocess.run(args, check=True, capture_output=True)
+
+
+def staged_files():
+    out = run("git", "diff", "--cached", "--name-only", "--diff-filter=ACMR", "-z").stdout
+    return [p for p in out.decode("utf-8", "surrogateescape").split("\0") if p]
+
+
+def index_entry(path):
+    # "<mode> <sha> <stage>\t<path>"
+    out = run("git", "ls-files", "-s", "--", path).stdout.decode()
+    if not out:
+        return None, None
+    mode, sha, _rest = out.split(None, 2)
+    return mode, sha
+
+
+def blob_bytes(sha):
+    return run("git", "cat-file", "-p", sha).stdout
+
+
+def strip_metadata(data):
+    """Return (new_bytes, note) with metadata stripped, or (None, reason) if skipped."""
+    im = Image.open(io.BytesIO(data))
+    im.load()
+    fmt = im.format
+    icc = im.info.get("icc_profile")
+    out = io.BytesIO()
+    note = None
+
+    if fmt == "JPEG":
+        kwargs = {"icc_profile": icc} if icc else {}
+        try:
+            im.save(out, format="JPEG", quality="keep", **kwargs)
+        except Exception:
+            # Some JPEGs (e.g. odd subsampling) reject quality="keep"; fall back
+            # to a high-quality re-encode rather than failing the commit.
+            out = io.BytesIO()
+            im.save(out, format="JPEG", quality=95, **kwargs)
+            note = "re-encoded (quality=95) -- quality='keep' unsupported for this file"
+    elif fmt == "PNG":
+        kwargs = {}
+        if icc:
+            kwargs["icc_profile"] = icc
+        for k in ("transparency", "dpi"):
+            if k in im.info:
+                kwargs[k] = im.info[k]
+        im.save(out, format="PNG", **kwargs)
+    elif fmt == "WEBP":
+        kwargs = {"icc_profile": icc} if icc else {}
+        if im.info.get("lossless"):
+            kwargs["lossless"] = True
+        else:
+            kwargs["quality"] = 95
+            note = "lossy WEBP re-encoded at quality=95 (original quality unknown)"
+        im.save(out, format="WEBP", **kwargs)
+    elif fmt == "TIFF":
+        kwargs = {"icc_profile": icc} if icc else {}
+        im.save(out, format="TIFF", **kwargs)
+    else:
+        return None, f"unsupported format {fmt!r}"
+
+    return out.getvalue(), note
+
+
+def main():
+    changed = []
+    for path in staged_files():
+        if not path.lower().endswith(IMAGE_EXTS):
+            continue
+
+        mode, sha = index_entry(path)
+        if sha is None:
+            continue
+
+        original = blob_bytes(sha)
+        try:
+            stripped, note = strip_metadata(original)
+        except Exception as e:
+            print(f"pre-commit: skipping {path} (couldn't process: {e})", file=sys.stderr)
+            continue
+
+        if stripped is None:
+            continue  # unsupported format, left as-is
+        if stripped == original:
+            continue  # nothing to strip
+
+        new_sha = subprocess.run(
+            ["git", "hash-object", "-w", "--stdin"],
+            input=stripped, capture_output=True, check=True,
+        ).stdout.decode().strip()
+        run("git", "update-index", "--cacheinfo", f"{mode},{new_sha},{path}")
+
+        # Keep the working tree file in sync, but only if it still matches
+        # what was staged -- otherwise leave it alone rather than clobber
+        # further edits the user hasn't staged yet.
+        try:
+            with open(path, "rb") as f:
+                working_tree_matches = f.read() == original
+        except FileNotFoundError:
+            working_tree_matches = False
+        if working_tree_matches:
+            with open(path, "wb") as f:
+                f.write(stripped)
+
+        saved = len(original) - len(stripped)
+        msg = f"stripped metadata from {path} (saved {saved} bytes)"
+        if note:
+            msg += f" [{note}]"
+        changed.append(msg)
+
+    for msg in changed:
+        print(f"pre-commit: {msg}")
+
+    sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()
