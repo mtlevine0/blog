@@ -5,6 +5,11 @@ theme = "PaperMod"
 enableRobotsTXT = true
 buildDrafts = false
 
+[markup.goldmark.parser]
+  wrapStandAloneImageWithinParagraph = false
+  [markup.goldmark.parser.attribute]
+    block = true
+
 [params]
   author = "Matt Levine"
   description = "Personal blog"

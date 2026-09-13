@@ -1,0 +1,43 @@
+<!-- Click-to-enlarge lightbox for post images. Vanilla JS, no dependencies. -->
+<script>
+(function () {
+    var overlay = document.createElement("div");
+    overlay.className = "lightbox-overlay";
+    overlay.hidden = true;
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-label", "Enlarged image");
+
+    var img = document.createElement("img");
+    overlay.appendChild(img);
+    document.body.appendChild(overlay);
+
+    function open(thumb) {
+        img.src = thumb.currentSrc || thumb.src;
+        img.alt = thumb.alt;
+        img.style.imageRendering = getComputedStyle(thumb).imageRendering;
+        overlay.hidden = false;
+        document.body.style.overflow = "hidden";
+    }
+
+    function close() {
+        overlay.hidden = true;
+        img.src = "";
+        document.body.style.overflow = "";
+    }
+
+    document.addEventListener("click", function (e) {
+        var thumb = e.target.closest(".post-content img");
+        if (thumb) {
+            open(thumb);
+            return;
+        }
+        if (!overlay.hidden && overlay.contains(e.target)) {
+            close();
+        }
+    });
+
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && !overlay.hidden) close();
+    });
+})();
+</script>
