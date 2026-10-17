@@ -41,17 +41,6 @@ For the prototype, three of these boards went onto a breadboard alongside the No
 
 ![Three single-channel driver boards on a breadboard with a NodeMCU and 150V boost module, driving three lit IN-9 tubes](breadboard-driver-boards-closeup.jpg "The breadboard prototype: boost module on the left, NodeMCU at the bottom, and three driver boards each wired to a tube.")
 
-### Revising the driver
-Building and testing the first circuit turned up a handful of changes, which went into a revised schematic:
-
-![Revised single-channel driver schematic with a 12V op-amp rail, input clamp and pulldown, offset resistor, and full-scale trimmer](driver-v2-schematic.png "The revised driver.")
-
-- **12V op-amp rail.** The LM358's output can't swing all the way to its positive supply; it tops out around 1.5V below it. On 5V that's about 3.5V, short of the ~3.95V (3.3V plus the base-emitter drop) needed to reach full scale. Moving the op-amp to 12V gives it plenty of headroom.
-- **RV1 (100Ω trimmer)** in series with R3 sets each tube's full-scale current, from about 12.2mA (3.3V across 270Ω) down to about 8.9mA (3.3V across 370Ω). That matters because no two IN-9s are quite alike.
-- **R4 (180k)** feeds a small current (tens of microamps) from 12V into the emitter node. That nudges the sense voltage up slightly, so at 0% input the op-amp drives the transistor fully off instead of leaving a faint glow from the LM358's offset.
-- **D1 (4.3V Zener)** clamps the op-amp input, so a 5V PWM source can't overdrive the tube.
-- **R5 (10k)** pulls the PWM input low, so a disconnected or rebooting microcontroller leaves the tube dark rather than floating.
-
 # Firmware
 ### PWM over serial
 The firmware is deliberately dumb: it accepts a line of text with one percentage per channel (`42.5 60 80`), converts each to a 10-bit duty cycle, writes it to a 20kHz PWM pin, and replies with an acknowledgement. Everything interesting happens on the PC.
@@ -108,7 +97,7 @@ flowchart TB
 ```
 
 ### Calibrating the tubes
-One thing that only showed up with real tubes is that they don't all reach the top at 100% PWM, and they don't all stop at the same place. The revised board's trimmer handles the coarse full-scale current per board, and the script takes a `--tube-max` per channel (for example `--tube-max 80,75,90`) describing how far each tube actually lights at full PWM. Every value the script sends is a bar length rather than a duty cycle, rescaled so that "50%" really means half of what that tube can show.
+One thing that only showed up with real tubes is that they don't all reach the top at 100% PWM, and they don't all stop at the same place. To compensate, the script takes a `--tube-max` per channel (for example `--tube-max 80,75,90`) describing how far each tube actually lights at full PWM. Every value the script sends is a bar length rather than a duty cycle, rescaled so that "50%" really means half of what that tube can show.
 
 Here's the whole chain running: system audio on the PC, through the `eq` mode, out over serial to the three tubes.
 
