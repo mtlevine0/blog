@@ -1,7 +1,12 @@
 {{- /* Markdown images. A title becomes a caption:
      ![alt text](/images/foo.jpg "Caption shown under the image")
-   Block attributes like {.half} stay on the <img> so existing CSS applies. */ -}}
-{{- $img := printf "<img src=%q alt=%q" .Destination .PlainText -}}
+   Block attributes like {.half} stay on the <img> so existing CSS applies.
+   A bare filename resolves to a file in the post's page bundle. */ -}}
+{{- $src := .Destination -}}
+{{- with .Page.Resources.Get .Destination -}}
+  {{- $src = .RelPermalink -}}
+{{- end -}}
+{{- $img := printf "<img src=%q alt=%q" $src .PlainText -}}
 {{- range $k, $v := .Attributes -}}
   {{- $img = printf "%s %s=%q" $img $k (string $v) -}}
 {{- end -}}

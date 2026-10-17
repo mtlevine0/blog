@@ -33,11 +33,33 @@ pip install Pillow
 
 ## Writing a post
 
+Each post is a [page bundle](https://gohugo.io/content-management/page-bundles/): a folder holding `index.md` and the post's images and videos.
+
 ```bash
-hugo new content posts/YYYY-MM-DD-my-title.md
+hugo new content posts/my-title/index.md
 ```
 
-Edit the generated file in `content/posts/`, set `draft: false`, then push:
+A multi-part series groups its posts in a subfolder, one bundle per part:
+
+```
+content/posts/in-9-spectrum-analyzer/
+└── part-1-driver-prototype/
+    ├── index.md
+    ├── breadboard-prototype-lit.jpg
+    └── three-band-demo.mp4
+```
+
+Reference assets by bare filename; the image render hook and `video` shortcode resolve them to the bundle's URL. Older posts still use `/images/...` paths under `static/`, which keep working.
+
+```markdown
+![Alt text](photo.jpg "Optional caption")
+
+{{</* video src="demo.mp4" poster="demo-poster.jpg" caption="Optional caption" */>}}
+```
+
+`video` also takes `loop="true"` (autoplay, muted, looping, like a GIF) and `class="compact"` (caps the height of portrait clips). For a cover image, set `cover.image` to the bundle filename.
+
+Edit `index.md`, set `draft: false`, then push:
 
 ```bash
 git add . && git commit -m "add post: title" && git push

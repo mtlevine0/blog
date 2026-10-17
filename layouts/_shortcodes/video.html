@@ -1,0 +1,19 @@
+{{- /* Local video, styled like a captioned image (overrides PaperMod's video shortcode).
+     {{< video src="foo.mp4" poster="foo.jpg" caption="Shown under the video" >}}
+   src and poster resolve to files in the post's page bundle, else are used as-is.
+   loop=true plays it like a GIF: autoplay, muted, looping, no controls.
+   class="compact" caps the height for portrait clips, like {.compact} on images. */ -}}
+{{- $src := .Get "src" -}}
+{{- with .Page.Resources.Get $src }}{{ $src = .RelPermalink }}{{ end -}}
+{{- $poster := .Get "poster" -}}
+{{- with $poster }}{{ with $.Page.Resources.Get . }}{{ $poster = .RelPermalink }}{{ end }}{{ end -}}
+{{- $loop := eq (.Get "loop") "true" -}}
+<figure class="post-figure">
+  <video src="{{ $src }}"
+    {{- with $poster }} poster="{{ . }}"{{ end }}
+    {{- with .Get "class" }} class="{{ . }}"{{ end }}
+    {{- if $loop }} autoplay muted loop{{ else }} controls preload="metadata"{{ end }} playsinline></video>
+  {{- with .Get "caption" }}
+  <figcaption>{{ . | markdownify }}</figcaption>
+  {{- end }}
+</figure>

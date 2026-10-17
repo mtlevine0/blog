@@ -71,6 +71,17 @@
     object-fit: cover;
 }
 
+/* Videos (see layouts/_shortcodes/video.html) */
+.post-content video {
+    display: block;
+    max-width: 100%;
+    margin: 1.5em auto 0.5em;
+}
+
+.post-content video.compact {
+    max-height: 600px;
+}
+
 /* Captioned images (see layouts/_markup/render-image.html) */
 .post-content .post-figure {
     margin: 1.5em 0;
