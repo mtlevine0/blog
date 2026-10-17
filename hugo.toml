@@ -1,6 +1,6 @@
 baseURL = "https://blog.mtlevine0.com"
 locale = "en-us"
-title = "Matt Levine's Blog"
+title = "Matt's Blog"
 theme = "PaperMod"
 enableRobotsTXT = true
 buildDrafts = false
@@ -20,6 +20,12 @@ buildDrafts = false
   ShowBreadCrumbs = false
   ShowCodeCopyButtons = true
   ShowRssButtonInSectionTermList = true
+
+[params.homeInfoParams]
+  Title = "Matt Levine - Engineer & Creator"
+  Content = """
+Personal projects and learning I think are worth sharing.
+"""
 
 [[params.socialIcons]]
   name = "github"
