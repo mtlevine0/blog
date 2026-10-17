@@ -63,3 +63,25 @@
     padding: 0;
     text-align: center;
 }
+
+/* Crop every cover image to the same aspect ratio (matches the LED wall
+   hero, ~1.9:1) so post cards line up regardless of the source photo. */
+.entry-cover img {
+    aspect-ratio: 1.9 / 1;
+    object-fit: cover;
+}
+
+/* Captioned images (see layouts/_markup/render-image.html) */
+.post-content .post-figure {
+    margin: 1.5em 0;
+}
+
+.post-content .post-figure img {
+    margin-bottom: 0.5em;
+}
+
+.post-content .post-figure figcaption {
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--secondary);
+}

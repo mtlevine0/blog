@@ -1,8 +1,11 @@
 ---
 title: "Building a Six-Tube IV-9 Numitron Clock - My Second Attempt at PCB Design"
-date: 2026-08-08
+cover:
+    image: "/images/numitron-clock/iv9-clock.JPG"
+    alt: The finished six-tube IV-9 Numitron clock, tubes lit
+date: 2026-02-04
 draft: false
-tags: ["hardware", "esp32", "kicad", "pcb", "numitron", "firmware", "clock", "display", "esoteric-display"]
+tags: ["hardware", "esp32", "kicad", "pcb", "numitron", "firmware", "clock", "display", "unconventional-displays"]
 ---
 
 A Numitron is what you get if you build a seven-segment display out of light bulbs. Each segment is a tungsten filament in an evacuated glass envelope, and it glows for the same reason a lamp does: you run current through it and it gets hot. No high voltage or gas discharge involved.

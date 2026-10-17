@@ -1,6 +1,9 @@
 ---
 title: "My Introduction to PCB Design"
-date: 2026-06-20
+cover:
+    image: "/images/pcb-design/merrie-minstreal-choir-pcb-hero.JPG"
+    alt: Completed custom PCBs
+date: 2025-12-28
 draft: false
 tags: ["hardware", "esp32", "kicad", "pcb", "oshpark", "christmas", "music"]
 ---

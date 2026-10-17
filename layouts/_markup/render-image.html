@@ -1,0 +1,16 @@
+{{- /* Markdown images. A title becomes a caption:
+     ![alt text](/images/foo.jpg "Caption shown under the image")
+   Block attributes like {.half} stay on the <img> so existing CSS applies. */ -}}
+{{- $img := printf "<img src=%q alt=%q" .Destination .PlainText -}}
+{{- range $k, $v := .Attributes -}}
+  {{- $img = printf "%s %s=%q" $img $k (string $v) -}}
+{{- end -}}
+{{- $img = printf "%s>" $img -}}
+{{- if and .IsBlock .Title -}}
+<figure class="post-figure">
+  {{ $img | safeHTML }}
+  <figcaption>{{ .Title | markdownify }}</figcaption>
+</figure>
+{{- else -}}
+{{ $img | safeHTML }}
+{{- end -}}
