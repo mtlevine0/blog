@@ -24,7 +24,7 @@ buildDrafts = false
 [params.homeInfoParams]
   Title = "Matt Levine - Engineer & Creator"
   Content = """
-Personal projects and learning I think are worth sharing.
+Personal projects and learnings I think are worth sharing.
 """
 
 [[params.socialIcons]]
