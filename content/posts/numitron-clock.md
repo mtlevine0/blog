@@ -9,7 +9,7 @@ A Numitron is what you get if you build a seven-segment display out of light bul
 
 RCA introduced the Numitron in [1970](https://en.wikipedia.org/wiki/Numitron) as a low-voltage alternative to the [Nixie tube](https://en.wikipedia.org/wiki/Nixie_tube), which had ruled numeric displays since the 1950s on a cold-cathode neon discharge that needed on the order of 170V to strike — awkward to drive from the 5V TTL logic that was becoming standard by the late 1960s. A Numitron's seven filament segments ran directly off a few volts and needed [far fewer switching elements than a Nixie's ten cathodes](https://hackaday.com/2024/07/08/plight-of-the-lowly-numitron-tube/), making it the simpler thing to drive from digital logic at the time. That combination made it a popular stopgap through the 1970s — [everything from gas pumps to aircraft cockpit gauges](https://hackaday.com/2024/07/08/plight-of-the-lowly-numitron-tube/) used one — right up until cheap [7-segment LED displays](https://en.wikipedia.org/wiki/Seven-segment_display) erased its one remaining advantage: an LED could also run straight off logic-level voltage, at a fraction of the current and without an incandescent filament's short service life, so there was no longer a reason to reach for a light bulb.
 
-The IV-9 is a Soviet-era version of that idea in a small side-view tube, and unlike a nixie it will happily run off the same low-voltage rail as the microcontroller sitting next to it. This style of display — a light bulb standing in for a modern display panel — is exactly the kind of esoteric display tech that I find interesting.  I plan to explor a few other types of display technologies including the nixie along with other gas discharge displays.
+The IV-9 is a Soviet-era version of that idea in a small side-view tube, and unlike a nixie it will happily run off the same low-voltage rail as the microcontroller sitting next to it. This style of display — a light bulb standing in for a modern display panel — is exactly the kind of esoteric display tech that I find interesting. I plan to explor a few other types of display technologies including the nixie along with other gas discharge displays.
 
 I also wanted the clock to be multi-functional, with an ambient temperature/humidity display alongside the time.
 
@@ -32,7 +32,7 @@ Fabricated at OSH Park on their standard 2-layer service: 1.6mm FR408, 1oz coppe
 <!-- IMAGE: bare PCB, top side -->
 ![KiCad PCB layout for the IV-9 Numitron Clock, showing the six tube footprints, driver ICs, and antenna keep-out zone](/images/numitron-clock/iv9-pcb.png)
 
-I couldn't find an existing verified IV-9 KiCad footprint online, so I made my own from scratch: measured the tube with digital calipers and built the KiCad footprint pad-by-pad. It was my first time hand-building a footprint rather than pulling one from a library.  When the board came back from the fab, the tube leads aligned perfectly with the display face oriented in parallel to the board edge.
+I couldn't find an existing verified IV-9 KiCad footprint online, so I made my own from scratch: measured the tube with digital calipers and built the KiCad footprint pad-by-pad. It was my first time hand-building a footprint rather than pulling one from a library. When the board came back from the fab, the tube leads aligned perfectly with the display face oriented in parallel to the board edge.
 
 ![Custom KiCad footprint for the IV-9 Numitron tube, drawn from digital caliper measurements](/images/numitron-clock/numitron-kicad-footprint.png)
 {.compact}
@@ -41,13 +41,13 @@ The tubes are wired common-anode to +3.3V, with the TLC5916s sinking each segmen
 
 ### Assembling a two-sided board
 
-This was my second attempt at [PCB design and fabrication](/posts/pcb-design/), and the board came out about 3x larger than my first one. Even at that size, space was tight enough that I had to place components on both sides of the board: a hot plate reflowed the top, where most of the components live, a hot air station handled the RTC on the bottom, and the backup battery got hand-soldered in afterward.  To my surprise I was able to one-shot the tiny temperature & humidity sensor, it responded immediately with no solder bridges.  Soldering the USB-C socket also went smoothly, there were bridges but I simply dragged some soldering wick across the leads with my soldering iron.  
+This was my second attempt at [PCB design and fabrication](/posts/pcb-design/), and the board came out about 3x larger than my first one. Even at that size, space was tight enough that I had to place components on both sides of the board: a hot plate reflowed the top, where most of the components live, a hot air station handled the RTC on the bottom, and the backup battery got hand-soldered in afterward. To my surprise I was able to one-shot the tiny temperature & humidity sensor, it responded immediately with no solder bridges. Soldering the USB-C socket also went smoothly, there were bridges but I simply dragged some soldering wick across the leads with my soldering iron.
 
 ![Bottom side of the board, showing the hand-soldered coin cell battery holder next to the hot-air-reflowed RTC](/images/numitron-clock/iv9-clock-bottom.jpg)
 
 ### The board did nothing
 
-The first assembled board did nothing. No tube segments lit, and the status LED didn't either: the least useful failure mode available, because it's consistent with almost any hardware bug you can name. I went over the schematic by hand eventually concluding that my common anode displays were accidentally wired as common cathode.  This was easy enough to fix by rerouting the tubes common wire to +3v.  A manual schematic review also identified that the hasty last minute addition of the status LED had left its serial input unconnected to the MCU.  A simple bodge wire fixed this.
+The first assembled board did nothing. No tube segments lit, and the status LED didn't either: the least useful failure mode available, because it's consistent with almost any hardware bug you can name. I went over the schematic by hand eventually concluding that my common anode displays were accidentally wired as common cathode. This was easy enough to fix by rerouting the tubes common wire to +3v. A manual schematic review also identified that the hasty last minute addition of the status LED had left its serial input unconnected to the MCU. A simple bodge wire fixed this.
 
 ### Ambient sensors need their space
 
@@ -55,11 +55,11 @@ The HDC2010 comes in a package under 1.5mm², small enough to tuck into whatever
 
 ### AI assisted EDA
 
-The defects were fixable but frustrating.  I decided to try asking Claude Opus to review my (yet to be repaired) schematic for issues.  It came back with two critical issues along with some more trivial noise.
+The defects were fixable but frustrating. I decided to try asking Claude Opus to review my (yet to be repaired) schematic for issues. It came back with two critical issues along with some more trivial noise.
 
 Both fixes are already in the board — the tube commons route to the +3.3V rail, and the status LED's data line lands on a real GPIO — and the KiCad layout shown earlier, under "What's on the board," is the revision that came back after that fix, not the one that came back unlit.
 
-It turns out I'm hardly the only one attempting to apply AI to EDA.  I had previously come across ongoing [MCP integration](https://github.com/mixelpixx/Konnect) work with KiCad.  I tried using it but at least at the time (July '26) the MCP was only working on Windows and I'm working solely on Linux.  I recently came across a [Hacker News article](https://news.ycombinator.com/item?id=49569366) discussing [evaluations being done by EE Bench](https://eebench.org/blog/can-ai-design-circuit-boards-yet/).  Their evaluations have Claude in the lead with the conclusion that yes current LLM technology is already making effective contributions in the EDA space.  I have begun another display project where I'm taking an AI-first approach to its EDA component.
+It turns out I'm hardly the only one attempting to apply AI to EDA. I had previously come across ongoing [MCP integration](https://github.com/mixelpixx/Konnect) work with KiCad. I tried using it but at least at the time (July '26) the MCP was only working on Windows and I'm working solely on Linux. I recently came across a [Hacker News article](https://news.ycombinator.com/item?id=49569366) discussing [evaluations being done by EE Bench](https://eebench.org/blog/can-ai-design-circuit-boards-yet/). Their evaluations have Claude in the lead with the conclusion that yes current LLM technology is already making effective contributions in the EDA space. I have begun another display project where I'm taking an AI-first approach to its EDA component.
 
 # Software
 
@@ -142,4 +142,4 @@ Every option is whitelist-validated against the values actually offered. That's 
 
 ### What's next
 
-I'm working on a few display related projects: a display using another soviet tube (IN-9) this time of the gas discharge variety.  Additionally I'm working on a large format LED video wall acting as a heads up display in my office.  I'm reverse engineering some of the proprietary software that drives commodity hardware I bought to power the display.
+I'm working on a few display related projects: a display using another soviet tube (IN-9) this time of the gas discharge variety. Additionally I'm working on a large format LED video wall acting as a heads up display in my office. I'm reverse engineering some of the proprietary software that drives commodity hardware I bought to power the display.

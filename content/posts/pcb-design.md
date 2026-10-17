@@ -17,7 +17,7 @@ The bell units take a ROM cartridge that contains the song data. The idea was to
 
 A single transmitter broadcasts over ESP-NOW. Receivers in the bell units pick it up and play in sync, with no pairing or per-device configuration needed.
 
-Pictured below is an initial test-bench set up and prototyping interfacing an EPS32 with the bells hardware.  The interface is trivial, the edge card connector is meant to mate with a ROM cartridge and provides +5v, GND, and a single pin per bell.  Apply +5v to a bell pin and the bells solenoid activates until you remove power.
+Pictured below is an initial test-bench set up and prototyping interfacing an EPS32 with the bells hardware. The interface is trivial, the edge card connector is meant to mate with a ROM cartridge and provides +5v, GND, and a single pin per bell. Apply +5v to a bell pin and the bells solenoid activates until you remove power.
 
 ![Ye Merrie Minstrel Caroling Christmas Bells](/images/pcb-design/test-bench.jpg)
 

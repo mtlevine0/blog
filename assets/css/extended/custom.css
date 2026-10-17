@@ -21,6 +21,12 @@
     max-height: 480px;
 }
 
+/* Tag an image with {.half} to display it at half the content column's
+   width. The file stays full size, so click-to-enlarge still shows detail. */
+.post-content img.half {
+    width: 50%;
+}
+
 /* Click-to-enlarge lightbox (see extend_footer.html) */
 .post-content img {
     cursor: zoom-in;
@@ -49,4 +55,11 @@
     max-height: 100%;
     cursor: zoom-out;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+}
+
+/* Mermaid diagrams: drop the code-block styling PaperMod gives <pre>. */
+.post-content pre.mermaid {
+    background: none;
+    padding: 0;
+    text-align: center;
 }

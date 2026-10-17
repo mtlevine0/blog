@@ -3,3 +3,28 @@
 <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "96ad923b9bc34897b9345d705e0d8472"}'></script>
 <!-- End Cloudflare Web Analytics -->
 {{- end }}
+{{- if and .IsPage (strings.Contains .RawContent "```mermaid") }}
+<!-- Mermaid diagrams (see layouts/_markup/render-codeblock-mermaid.html).
+     Re-renders on theme toggle so diagrams follow PaperMod's light/dark mode. -->
+<script type="module">
+// Module scripts are deferred, so this runs after the body is parsed.
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
+
+var blocks = document.querySelectorAll("pre.mermaid");
+blocks.forEach(function (el) { el.dataset.source = el.textContent; });
+
+function render() {
+    var dark = document.body.classList.contains("dark");
+    mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "neutral" });
+    blocks.forEach(function (el) {
+        el.removeAttribute("data-processed");
+        el.textContent = el.dataset.source;
+    });
+    mermaid.run({ nodes: blocks });
+}
+
+render();
+var toggle = document.getElementById("theme-toggle");
+if (toggle) toggle.addEventListener("click", function () { setTimeout(render, 0); });
+</script>
+{{- end }}
