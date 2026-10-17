@@ -1,8 +1,8 @@
 ---
 title: "IN-9 Spectrum Analyzer, Part 1: Prototyping the Tube Driver"
 cover:
-    image: "breadboard-prototype-lit.jpg"
-    alt: Three IN-9 tubes lit on the breadboard prototype
+    image: "breadboard-prototype-top-down.jpg"
+    alt: Top-down view of the breadboard prototype driving three lit IN-9 tubes
 date: 2026-09-11T00:04:00-04:00
 draft: false
 tags: ["hardware", "kicad", "pcb", "esp8266", "firmware", "python", "audio", "in-9", "display", "unconventional-displays", "claude", "product-design"]
