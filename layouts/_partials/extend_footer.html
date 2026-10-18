@@ -12,28 +12,49 @@
 </script>
 <!-- Looping videos (video shortcode with loop=true). Mobile browsers pause them
      when the tab loses focus and don't resume, and there are no controls, so
-     restart them when the page comes back and let a tap play a paused one. -->
+     restart them when the page comes back and let a tap restart one. -->
 <script>
 (function () {
     var videos = document.querySelectorAll("video[loop]");
     if (!videos.length) return;
 
+    // After switching apps, iOS can leave a video frozen while still
+    // reporting paused === false, so don't trust it: pause and play again.
+    function restart(v) {
+        if (!v.paused) v.pause();
+        v.play().catch(function () {});
+    }
+
     function resume() {
-        if (document.hidden) return;
-        videos.forEach(function (v) {
-            if (v.paused) v.play().catch(function () {});
-        });
+        if (!document.hidden) videos.forEach(restart);
     }
 
     document.addEventListener("visibilitychange", resume);
     window.addEventListener("pageshow", resume);
     window.addEventListener("focus", resume);
 
-    // Fallback when autoplay is blocked outright (e.g. iOS Low Power Mode).
-    videos.forEach(function (v) {
-        v.addEventListener("click", function () {
-            if (v.paused) v.play().catch(function () {});
+    // The events above don't reliably fire (or play() is rejected) when
+    // returning from another app on iOS, so also watch for on-screen videos
+    // whose playback hasn't advanced and restart them.
+    var last = new Map();
+    setInterval(function () {
+        if (document.hidden) return;
+        videos.forEach(function (v) {
+            var r = v.getBoundingClientRect();
+            var onScreen = r.bottom > 0 && r.top < window.innerHeight;
+            if (!onScreen || v.readyState < 3) {
+                last.delete(v);
+                return;
+            }
+            if (v.paused || last.get(v) === v.currentTime) restart(v);
+            last.set(v, v.currentTime);
         });
+    }, 1000);
+
+    // Fallback when autoplay is blocked outright (e.g. iOS Low Power Mode)
+    // or a video is stuck frozen.
+    videos.forEach(function (v) {
+        v.addEventListener("click", function () { restart(v); });
     });
 })();
 </script>
