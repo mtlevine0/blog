@@ -1,14 +1,15 @@
 ---
 title: "An Open Source LED Video Wall from Cheap Commodity Hardware (Part 2: GRID)"
 cover:
-    image: "/images/led-wall/widget-contact-sheet.png"
+    image: "widget-contact-sheet.png"
+    relative: true
     alt: Contact sheet of all sixteen GRID widgets, each captured off the live wall
 date: 2026-09-08T10:00:00-05:00
 draft: true
 tags: ["hardware", "python", "pygame", "led", "video-wall", "home-lab", "reverse-engineering"]
 ---
 
-![now-playing widget on the wall, mid-song](/images/led-wall/spotiamp-frame.png)
+![now-playing widget on the wall, mid-song](spotiamp-frame.png)
 {.pixelated}
 
 [Part one]({{< ref "led-video-wall.md" >}}) of this series covered `colorlightpy`: a driver that will take any well-formed stream of raw RGB frames and put it reliably on a wall-mounted 384×192 LED display. That's necessary, but it says nothing about *what* to show, or how to switch between things without SSHing in and restarting a process. This post is about the layer working on turning "a pipe that accepts pixels" into something closer to an actual product: [GRID](https://github.com/mtlevine0/grid), a wall of independent live widgets with a physical remote.
@@ -31,10 +32,10 @@ That's the whole seam between the two projects. `gridtron` writes exactly the fr
 
 The project started as a single widget — a now-playing display, `spotiamp` — and outgrew that almost immediately into wanting several things on one wall, on demand, without a keyboard involved. The first draft of this post said nine widgets were installed. As of this revision it's sixteen: live sports scores, a system monitor, now-playing, weather, home-network stats, NVR camera alerts, a home energy monitor, a thermostat dashboard, TrueNAS storage, a water meter, a 3D printer's job status, a rotating deck of famous quotes, an interactive emoji wall, a screen-test pattern generator, a monitor for GRID itself, and — a little self-referentially — `Agentlytics`, which reads Claude Code's and Codex's local transcripts to show token and quota burn per session.
 
-![GRID's home page, rendered off the real manifest and render code](/images/led-wall/pad-home.png)
-![weather widget, real conditions at capture time](/images/led-wall/weather-frame.png)
-![Frigate NVR alerts pulled from a live instance](/images/led-wall/frigate-frame.png)
-![home energy monitor: whole-panel wattage, today's cost, and panel load](/images/led-wall/emporia-frame.png)
+![GRID's home page, rendered off the real manifest and render code](pad-home.png)
+![weather widget, real conditions at capture time](weather-frame.png)
+![Frigate NVR alerts pulled from a live instance](frigate-frame.png)
+![home energy monitor: whole-panel wattage, today's cost, and panel load](emporia-frame.png)
 
 The home energy monitor, pulling from an Emporia Vue panel sensor, is a good example of where the wall has been heading: one page for real-time whole-panel wattage against a 200A/240V ceiling with a five-minute sparkline, one for today's and this month's cost against the account's actual per-kWh rate, one ranking the top individual circuits by draw, and one shaped like a day-long load curve you can scrub back through with a dial. None of it is a novel UI idea — it's the same kind of thing a real energy-monitoring product shows — but it's the wall doing something other than glanceable status: numbers you'd actually study for a few seconds, not just glance past. The thermostat and water-meter widgets since followed the same shape, and the scrubbable time-series chart that grew up in one of them now lives in a shared toolkit the others import.
 
@@ -62,7 +63,7 @@ That's now how most of the wall's interruptions work. Frigate grabs it for the c
 
 Most widgets on the wall are read-only — they show you something. `emoji-wall` is the one built the other way around: post an emoji and it drops onto the wall and falls, with the poster's name riding along.
 
-![emoji wall mid-fall, three people posting at once](/images/led-wall/emoji-wall-frame.png)
+![emoji wall mid-fall, three people posting at once](emoji-wall-frame.png)
 
 Several paths land on the same `emoji.post` command underneath: the pad's eight favorite-emoji keys on its main page, a dial-browse-then-fire pair (rotate through a category, press to drop whatever's browsed — a chip in the corner of the wall shows what's queued so you're not looking away from the wall to see what you're about to post), `emojiwallctl post <glyph> [from-name]` from the host itself, and — new since the first draft — a phone-sized emoji picker served over the LAN. Repost the same glyph inside about 0.6 seconds and it escalates — bigger, extra copies past a couple of repeats, a screen-shake past five in a row — which is the kind of thing that turns "post an emoji" into people actually competing to spam the wall. Dials now set gravity (all the way down to zero-G, which turns the wall into a closed box of drifting emoji) and how many copies each post bursts into.
 

@@ -1,7 +1,8 @@
 ---
 title: "My Introduction to PCB Design"
 cover:
-    image: "/images/pcb-design/merrie-minstreal-choir-pcb-hero.JPG"
+    image: "merrie-minstreal-choir-pcb-hero.JPG"
+    relative: true
     alt: Completed custom PCBs
 date: 2025-12-28
 draft: false
@@ -22,7 +23,7 @@ A single transmitter broadcasts over ESP-NOW. Receivers in the bell units pick i
 
 Pictured below is an initial test-bench set up and prototyping interfacing an EPS32 with the bells hardware. The interface is trivial, the edge card connector is meant to mate with a ROM cartridge and provides +5v, GND, and a single pin per bell. Apply +5v to a bell pin and the bells solenoid activates until you remove power.
 
-![Ye Merrie Minstrel Caroling Christmas Bells](/images/pcb-design/test-bench.jpg)
+![Ye Merrie Minstrel Caroling Christmas Bells](test-bench.jpg)
 
 ## Designing the Board in KiCad
 
@@ -40,7 +41,7 @@ I ordered the boards through [OSH Park](https://oshpark.com), which was a natura
 
 The boards came back clean. Soldering the ESP32 and a handful of passives was straightforward, and the edge connector seated perfectly.
 
-![PCB Close Up](/images/pcb-design/esp32_bells_module.JPG)
+![PCB Close Up](esp32_bells_module.JPG)
 ![Assembled PCB](https://github.com/mtlevine0/merrie-minstrel-choir/raw/main/docs/assembled.JPG)
 
 ## The Firmware

@@ -1,7 +1,8 @@
 ---
 title: "Building a Six-Tube IV-9 Numitron Clock - My Second Attempt at PCB Design"
 cover:
-    image: "/images/numitron-clock/iv9-clock.JPG"
+    image: "iv9-clock.JPG"
+    relative: true
     alt: The finished six-tube IV-9 Numitron clock, tubes lit
 date: 2026-02-04
 draft: false
@@ -16,7 +17,7 @@ The IV-9 is a Soviet-era version of that idea in a small side-view tube, and unl
 
 I also wanted the clock to be multi-functional, with an ambient temperature/humidity display alongside the time.
 
-![The finished six-tube IV-9 Numitron clock on the bench, tubes lit](/images/numitron-clock/iv9-clock.JPG)
+![The finished six-tube IV-9 Numitron clock on the bench, tubes lit](iv9-clock.JPG)
 
 # EDA
 ### What's on the board
@@ -33,11 +34,11 @@ The design splits into a main sheet and a display sheet:
 Fabricated at OSH Park on their standard 2-layer service: 1.6mm FR408, 1oz copper, ENIG finish, 6mil minimum trace and clearance.
 
 <!-- IMAGE: bare PCB, top side -->
-![KiCad PCB layout for the IV-9 Numitron Clock, showing the six tube footprints, driver ICs, and antenna keep-out zone](/images/numitron-clock/iv9-pcb.png)
+![KiCad PCB layout for the IV-9 Numitron Clock, showing the six tube footprints, driver ICs, and antenna keep-out zone](iv9-pcb.png)
 
 I couldn't find an existing verified IV-9 KiCad footprint online, so I made my own from scratch: measured the tube with digital calipers and built the KiCad footprint pad-by-pad. It was my first time hand-building a footprint rather than pulling one from a library. When the board came back from the fab, the tube leads aligned perfectly with the display face oriented in parallel to the board edge.
 
-![Custom KiCad footprint for the IV-9 Numitron tube, drawn from digital caliper measurements](/images/numitron-clock/numitron-kicad-footprint.png)
+![Custom KiCad footprint for the IV-9 Numitron tube, drawn from digital caliper measurements](numitron-kicad-footprint.png)
 {.compact}
 
 The tubes are wired common-anode to +3.3V, with the TLC5916s sinking each segment. That's the detail that makes the constant-current driver worth using rather than a plain shift register and 48 resistors: the tube's filament resistance changes as it heats, and a current sink doesn't care. A single external resistor (R-EXT, 1k here) sets the current for all eight of a chip's outputs, about 19mA per segment with the high-current multiplier engaged.
@@ -46,7 +47,7 @@ The tubes are wired common-anode to +3.3V, with the TLC5916s sinking each segmen
 
 This was my second attempt at [PCB design and fabrication](/posts/pcb-design/), and the board came out about 3x larger than my first one. Even at that size, space was tight enough that I had to place components on both sides of the board: a hot plate reflowed the top, where most of the components live, a hot air station handled the RTC on the bottom, and the backup battery got hand-soldered in afterward. To my surprise I was able to one-shot the tiny temperature & humidity sensor, it responded immediately with no solder bridges. Soldering the USB-C socket also went smoothly, there were bridges but I simply dragged some soldering wick across the leads with my soldering iron.
 
-![Bottom side of the board, showing the hand-soldered coin cell battery holder next to the hot-air-reflowed RTC](/images/numitron-clock/iv9-clock-bottom.jpg)
+![Bottom side of the board, showing the hand-soldered coin cell battery holder next to the hot-air-reflowed RTC](iv9-clock-bottom.jpg)
 
 ### The board did nothing
 
@@ -140,7 +141,7 @@ The page is built at request time rather than served from a PROGMEM literal, so 
 
 Every option is whitelist-validated against the values actually offered. That's not paranoia about attackers; it's that a hand-crafted POST could otherwise write a setting no menu can reach, and the only recovery on this board would be a reflash.
 
-![Numitron Clock Setup captive portal on a phone, showing network, timezone, ZIP code, clock format, and temperature unit fields](/images/numitron-clock/iv9-clock-setup.png)
+![Numitron Clock Setup captive portal on a phone, showing network, timezone, ZIP code, clock format, and temperature unit fields](iv9-clock-setup.png)
 {.compact}
 
 ### What's next

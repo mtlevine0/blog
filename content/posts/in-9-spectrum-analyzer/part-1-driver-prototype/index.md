@@ -2,6 +2,7 @@
 title: "IN-9 Spectrum Analyzer, Part 1: Prototyping the Tube Driver"
 cover:
     image: "breadboard-prototype-top-down.jpg"
+    relative: true
     alt: Top-down view of the breadboard prototype driving three lit IN-9 tubes
 date: 2026-09-11T00:04:00-04:00
 draft: false

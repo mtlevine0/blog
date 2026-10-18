@@ -2,6 +2,7 @@
 title: "IN-9 Spectrum Analyzer, Part 2: Designing the Driver Board with AI"
 cover:
     image: "dual-driver-3d.jpg"
+    relative: true
     alt: 3D render of the dual-channel IN-9 driver board
 date: 2026-10-13
 draft: false
