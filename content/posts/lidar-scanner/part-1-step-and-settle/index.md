@@ -5,7 +5,7 @@ cover:
     relative: true
     alt: Colored point cloud of a house's main floor, merged from several scans and viewed from above with the ceiling cropped away
 date: 2026-01-10
-draft: true
+draft: false
 tags: ["hardware", "lidar", "3d-scanning", "point-cloud", "python", "esp32", "stepper", "3d-printing"]
 description: "Turning a 2D robot-vacuum-style lidar into a 3D room scanner with a stepper-driven turntable, and coloring the point cloud with a camera."
 ---
