@@ -37,13 +37,13 @@ I laid it out as a tiny single-channel board in KiCad: an SOIC LM358, the TO-92 
 ![3D render of the single-channel IN-9 driver board](driver-v1-pcb-render.png "First single-channel layout, rendered in KiCad. By this point the op-amp ran from 12V and the op-amp input had a 100k pulldown (R4).")
 {.half}
 
-For the prototype, three of these boards went onto a breadboard alongside the NodeMCU and a small 150V boost converter module, one board per tube.
+For the prototype, three of these boards went onto a breadboard alongside the MCU and a small 150V boost converter module, one board per tube.
 
-![Three single-channel driver boards on a breadboard with a NodeMCU and 150V boost module, driving three lit IN-9 tubes](breadboard-driver-boards-closeup.jpg "The breadboard prototype: boost module on the left, NodeMCU at the bottom, and three driver boards each wired to a tube.")
+![Three single-channel driver boards on a breadboard with an MCU and 150V boost module, driving three lit IN-9 tubes](breadboard-driver-boards-closeup.jpg "The breadboard prototype: boost module on the left, MCU at the bottom, and three driver boards each wired to a tube.")
 
 # Firmware
 ### PWM over serial
-The firmware is deliberately dumb: it accepts a line of text with one percentage per channel (`42.5 60 80`), converts each to a 10-bit duty cycle, writes it to a 20kHz PWM pin, and replies with an acknowledgement. Everything interesting happens on the PC.
+The firmware is simple. It accepts a line of text with one percentage per channel (`42.5 60 80`), converts each to a 10-bit duty cycle, writes it to a 20kHz PWM pin, and replies with an acknowledgement.
 
 It started with one channel on D0, grew to two (D0, D1), and then to three (D0, D1, D2) for the 3-band display. The serial protocol stayed the same throughout:
 
@@ -59,7 +59,7 @@ The host waits for each acknowledgement before sending the next command, so the 
 ### Flicker
 The firmware also gates all of the PWM outputs on and off at 85Hz, with a 50% on-time by default. Both the rate and the on-time can be changed over serial with `flicker <Hz> [on%]`, or turned off entirely.
 
-The reason is historical: IN-9s were [often driven with half-wave rectified current](https://www.elektormagazine.com/labs/nixie-bargraph-thermometer-with-arduino) rather than DC, so the tube saw pulses at mains frequency rather than a steady current. Gating the drive at 85Hz reproduces that pulsed operation.  Introducing the flicker helps ensure the tubes glow starts at its base and ends at the point as dictated by the current.  I found without it the glow is more prone to "jumping" where only a portion of the filament is glowing.
+IN-9s were [often driven with half-wave rectified current](https://www.elektormagazine.com/labs/nixie-bargraph-thermometer-with-arduino) rather than DC, so the tube saw pulses at mains frequency rather than a steady current. Gating the drive at 85Hz reproduces that pulsed operation.  Introducing the flicker helps ensure the tubes glow starts at its base and ends at the point as dictated by the current.  I found without it the glow is more prone to "jumping" where only a portion of the filament is glowing.
 
 # Host software
 ### From audio to bars
@@ -90,7 +90,7 @@ flowchart TB
     subgraph pc["PC"]
         a["System audio<br/><small>parec monitor</small>"] --> f["FFT → 3 bands<br/><small>smoothing · auto-range</small>"]
     end
-    f -- "USB serial<br/><small>A% B% C% @ 50 Hz</small>" --> m["NodeMCU<br/><small>20 kHz PWM · flicker gate</small>"]
+    f -- "USB serial<br/><small>A% B% C% @ 50 Hz</small>" --> m["MCU<br/><small>20 kHz PWM · flicker gate</small>"]
     m -- PWM --> d["Driver ×3<br/><small>RC · op-amp · MPSA42</small>"]
     d --> t["IN-9 ×3"]
     hv["150 V boost"] --> t
@@ -103,7 +103,7 @@ Here's the whole chain running: system audio on the PC, through the `eq` mode, o
 
 {{< video src="three-band-demo.mp4" poster="three-band-demo-poster.jpg" class="compact" caption="The 3-band display running to music. Left to right: bass, mids, highs." >}}
 
-# Where this leaves off
+# What's next
 The prototype answered the question it was built for. A PWM pin, an RC filter, and an op-amp current sink give smooth, stable, linear control of an IN-9's bar length, and a PC can feed three of them a live spectrum over serial at 50 updates a second.
 
 It also showed where three tubes stop scaling. The ESP8266 has about seven clean PWM pins and generates PWM in software, so ten tubes at 20kHz is beyond it. Ten tubes at 12mA each also draw about 120mA from the 150V rail, around 18W, which is more than many small boost modules are rated for. Part two covers the first step toward ten: a dual-channel driver board designed almost entirely by AI. Later parts cover scaling the PWM side up to ten bands and designing a physical assembly to hold the tubes. As a preview, the frame is already printed:

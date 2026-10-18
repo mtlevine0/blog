@@ -34,7 +34,7 @@ The single-channel prototype board from part one was laid out with Claude too, u
 - **No Zener clamps.** A schematic review flagged that 4.3V Zeners can leak at 3.3V, and the PWM source is always the 3.3V NodeMCU, so they came out.
 
 # Layout and routing
-The layout was the most interesting part. I gave Claude the constraints in plain English, the same way I'd brief a person:
+I provided Claude with the following contraints:
 
 - The board can be double-sided, but only resistors, capacitors, and diodes may go on the back.
 - Boards will be fabbed in batches and mounted side by side, with jumper tabs carrying 12V, GND, and 150V from one board's power header to the next. So the power headers have to sit flush with the board edges, and their spacing is critical.
