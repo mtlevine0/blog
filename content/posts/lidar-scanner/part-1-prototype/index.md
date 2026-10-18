@@ -84,7 +84,7 @@ The camera's field of view is much narrower than the lidar's full circle, so onl
 # Stitching rooms together
 One scan only sees what's in line of sight from one spot. To capture more than one room and reduce blind spots, I took several scans from different places and aligned them by hand in MeshLab, then merged them into one cloud. The image at the top of this post is the whole main floor, merged this way. But lining up each scan by eye was slow and never quite exact.
 
-{{< video src="kitchen-three-scan-orbit.mp4" poster="kitchen-three-scan-orbit-poster.jpg" loop="true" caption="The kitchen, merged by hand from three HLS-LFCD2 scans taken from different spots. Ceiling cropped away, and the walls nearest the camera are hidden as it orbits." >}}
+{{< video src="kitchen-three-scan-pan.mp4" poster="kitchen-three-scan-pan-poster.jpg" loop="true" caption="The kitchen, merged by hand from three HLS-LFCD2 scans taken from different spots, panning across the room from about eye height. Ceiling cropped away." >}}
 
 {{< video src="main-floor-multiscan-orbit.mp4" poster="main-floor-multiscan-orbit-poster.jpg" loop="true" caption="The merged main floor from the cover image, orbited from above with the ceiling cropped away." >}}
 
