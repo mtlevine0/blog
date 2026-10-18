@@ -1,9 +1,9 @@
 ---
 title: "Open-Source Video Wall, Part 2: Displaying Content"
 cover:
-    image: "spotiamp-frame.png"
+    image: "grid-diagram.png"
     relative: true
-    alt: now-playing widget on the wall, mid-song
+    alt: "GRID architecture: the macro pad and gridctl drive gridtron, which hosts view widgets in-process, talks to process widgets over pipes and sockets, and streams raw RGB frames through colorlightpy to the LED wall"
 date: 2026-09-08T10:00:00-05:00
 draft: false
 tags: ["hardware", "python", "pygame", "led", "video-wall", "home-lab", "reverse-engineering"]
