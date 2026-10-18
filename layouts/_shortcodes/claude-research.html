@@ -1,0 +1,8 @@
+{{- /* Marks a block of text as research compiled by Claude, with a label
+     above it and a tinted, bordered background.
+     {{< claude-research >}} ...markdown... {{< /claude-research >}}
+   label="..." overrides the default label. */ -}}
+<aside class="claude-research">
+  <div class="claude-research-label">{{ .Get "label" | default "Research compiled by Claude" }}</div>
+  {{ .Inner | .Page.RenderString (dict "display" "block") }}
+</aside>
