@@ -10,6 +10,33 @@
     wide.addEventListener("change", sync);
 })();
 </script>
+<!-- Looping videos (video shortcode with loop=true). Mobile browsers pause them
+     when the tab loses focus and don't resume, and there are no controls, so
+     restart them when the page comes back and let a tap play a paused one. -->
+<script>
+(function () {
+    var videos = document.querySelectorAll("video[loop]");
+    if (!videos.length) return;
+
+    function resume() {
+        if (document.hidden) return;
+        videos.forEach(function (v) {
+            if (v.paused) v.play().catch(function () {});
+        });
+    }
+
+    document.addEventListener("visibilitychange", resume);
+    window.addEventListener("pageshow", resume);
+    window.addEventListener("focus", resume);
+
+    // Fallback when autoplay is blocked outright (e.g. iOS Low Power Mode).
+    videos.forEach(function (v) {
+        v.addEventListener("click", function () {
+            if (v.paused) v.play().catch(function () {});
+        });
+    });
+})();
+</script>
 <!-- Click-to-enlarge lightbox for post images. Vanilla JS, no dependencies. -->
 <script>
 (function () {
