@@ -1,5 +1,5 @@
 ---
-title: "3D Lidar Scanner, Part 1: Low Resolution Point Cloud"
+title: "3D Lidar Scanner, Part 1: Low-Resolution Point Cloud"
 cover:
     image: "main-floor-multiscan.png"
     relative: true
@@ -7,12 +7,12 @@ cover:
 date: 2026-01-10
 draft: false
 tags: ["hardware", "lidar", "3d-scanning", "point-cloud", "python", "esp32", "stepper", "3d-printing"]
-description: "Turning a 2D robot-vacuum-style lidar into a 3D room scanner with a stepper-driven turntable, and coloring the point cloud with a camera."
+description: "A low-resolution prototype 3D room scanner: a surplus robot-vacuum lidar on a stepper-driven turntable, with color from a camera."
 ---
 
-I've been fascinated by the "doll house" views commonly used on real estate listings. I saw cheap vacuum robot 2D lidar scanners for sale surplus and decided to give it a try myself. This is part one of a series exploring building a 3D interior scanner from a 2D lidar. 
+I've been fascinated by the "dollhouse" views commonly used on real estate listings. When I saw cheap 2D lidar scanners from robot vacuums for sale as surplus, I decided to build my own 3D scanner. This is part one of a series on building a 3D interior scanner from a 2D lidar.
 
-This post covers the first version, built over a few evenings in January: a turntable that steps, waits for the wobble to die down, grabs one 2D slice, and steps again. It worked well enough to scan rooms and color them from a camera. It also showed exactly where that approach runs out, which is what the rest of the series is about.
+This post covers the first prototype, built over a few evenings in January. It's deliberately simple: a cheap lidar on a 3D-printed turntable, scanning a room one slice at a time. The resolution is low, but it was enough to scan real rooms, color them from a camera, and show what later versions would need to fix.
 
 # The hardware
 The mechanical side is four 3D-printed parts:
@@ -27,8 +27,8 @@ The mechanical side is four 3D-printed parts:
 
 The stepper is driven from an ESP32 through an ordinary STEP/DIR driver. The firmware is a small serial command interpreter: `ANGLE 42.5` moves to an absolute angle, `SPEED` sets the RPM, `HOME` zeroes the position, and every command ends with `OK` or `ERROR`. There's no homing switch, so 0° is wherever the platform was at power-up.
 
-### The first lidar: HLS-LFCD2
-The first lidar was an HLS-LFCD2, the unit sold as the LDS-01 on the TurtleBot3. It's cheap and well documented, and it's about as simple as a lidar protocol gets. You send `b` to start it and `e` to stop it. While it runs, it streams 42-byte frames at 230400 baud. Each frame starts with `0xFA`, then an index byte that says which six degrees it covers, then six readings:
+## The lidar: HLS-LFCD2
+The lidar is an HLS-LFCD2, the unit sold as the LDS-01 on the TurtleBot3. It's cheap and well documented, and it's about as simple as a lidar protocol gets. You send `b` to start it and `e` to stop it. While it runs, it streams 42-byte frames at 230400 baud. Each frame starts with `0xFA`, then an index byte that says which six degrees it covers, then two bytes of motor speed, then six 6-byte readings, with a two-byte checksum at the end. The distance sits two bytes into each reading:
 
 ```python
 base_angle = (frame[1] - 0xA0) * 6
@@ -39,9 +39,8 @@ for m in range(6):
 
 That's one reading per degree, 360 per revolution, at about 5 revolutions a second. A full slice is 60 frames.
 
-# Step and settle
-### From slices to 3D
-The scan loop is as direct as it sounds:
+# Scanning
+The prototype scans with a step-and-settle loop, which is as direct as it sounds:
 
 1. Move the platform to the next angle.
 2. Wait a second for the vibration to settle.
@@ -59,14 +58,18 @@ y = y_2d
 z = x_2d * np.sin(theta)
 ```
 
-Because the lidar sees a full circle, half a turn of the platform covers every direction: the front half of the circle sweeps one hemisphere and the back half sweeps the other. The first scans ran from 0° to 180° in 0.5° steps, 361 slices, and with a one-second settle at every stop they took the better part of ten minutes. The output was an ASCII PLY file, which opens directly in MeshLab or CloudCompare.
+Because the lidar sees a full circle, half a turn of the platform covers every direction: the front half of the circle sweeps one hemisphere and the back half sweeps the other. A scan runs from 0° to 180° in 0.5° steps (361 slices), and with a one-second settle at every stop it takes the better part of ten minutes.
+
+Each scan is saved as an ASCII PLY file, which opens directly in MeshLab or CloudCompare.
 
 ![Uncolored point cloud of a small office, shaded by height, viewed from above with the ceiling cropped away](hls-lfcd2-office-scan-uncolored.png "An HLS-LFCD2 scan of my office with no color. Ceiling cropped away.")
 
-# Color
-A bare point cloud shows geometry but not much else. You can recognise a room, but not what's in it. To color it, I mounted a camera alongside the lidar and took a frame at every stop.
+That's the resolution this prototype works at. With one reading per degree from the lidar and half a degree between slices, walls, doorways, and large furniture are clear, but anything smaller is already breaking up.
 
-The first approach used the fact that the camera turns with the lidar. With the camera on its side, the centre column of each frame is a vertical line of pixels looking in nearly the same direction as that slice. For each lidar point, its elevation angle as seen from the camera picks a row in that column:
+# Color
+A bare point cloud shows geometry but not much else. You can recognize a room, but not what's in it. To color it, I mounted a camera alongside the lidar and took a frame at every stop.
+
+The coloring relies on the fact that the camera turns with the lidar. With the camera on its side, the center column of each frame is a vertical line of pixels looking in nearly the same direction as that slice. For each lidar point, its elevation angle as seen from the camera picks a row in that column:
 
 ```python
 y_from_camera = y_3d - camera_vertical_offset
@@ -76,10 +79,10 @@ vertical_angle = np.degrees(np.arctan2(y_from_camera, horizontal_dist))
 
 The camera's field of view is much narrower than the lidar's full circle, so only part of each slice gets real color. Everything outside it is painted a placeholder yellow. Getting the colors to land on the right points took a few rounds of hand-tuning. The camera's tilt and its height above the lidar each needed a correction.
 
-![Colored point cloud of a small office seen from above, with the ceiling and the two nearest walls cut away](hls-lfcd2-office-scan.png "The same office scan with color from the camera, with the ceiling and the two nearest walls cut away. Most of the yellow placeholder points were on the ceiling.")
+![Colored point cloud of a small office seen from above, with the ceiling and the two nearest walls cut away](hls-lfcd2-office-scan.png "The same office scan with color from the camera, seen from a different angle with the ceiling and the two nearest walls cut away. Most of the yellow placeholder points were on the ceiling.")
 
 # Stitching rooms together
-One scan sees one room in what's line of sight from one spot. To get more than that, I took several scans from different places and aligned them by hand in MeshLab, then merged them into one cloud. It worked, and it was the first time the scanner produced something that looked like a floor plan, but lining up each scan by eye was slow and never quite exact.
+One scan only sees what's in line of sight from one spot. To capture more than one room, I took several scans from different places and aligned them by hand in MeshLab, then merged them into one cloud. It worked, and it was the first time the scanner produced something that looked like a floor plan: the image at the top of this post is the whole main floor, merged this way. But lining up each scan by eye was slow and never quite exact.
 
 {{< video src="kitchen-three-scan-orbit.mp4" poster="kitchen-three-scan-orbit-poster.jpg" loop="true" caption="The kitchen, merged by hand from three HLS-LFCD2 scans taken from different spots. Ceiling cropped away, and the walls nearest the camera are hidden as it orbits." >}}
 
