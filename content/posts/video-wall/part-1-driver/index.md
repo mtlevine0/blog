@@ -6,6 +6,7 @@ cover:
     alt: LED wall running a demo
 date: 2026-02-13T09:00:00-04:00
 draft: false
+aliases: ["/posts/led-video-wall/"]
 tags: ["hardware", "python", "led", "video-wall", "networking", "reverse-engineering", "claude", "display", "unconventional-displays"]
 ---
 

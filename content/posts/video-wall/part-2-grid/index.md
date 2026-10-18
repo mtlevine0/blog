@@ -12,7 +12,7 @@ tags: ["hardware", "python", "pygame", "led", "video-wall", "home-lab", "reverse
 ![now-playing widget on the wall, mid-song](spotiamp-frame.png)
 {.pixelated}
 
-[Part one]({{< ref "led-video-wall.md" >}}) of this series covered `colorlightpy`: a driver that will take any well-formed stream of raw RGB frames and put it reliably on a wall-mounted 384×192 LED display. That's necessary, but it says nothing about *what* to show, or how to switch between things without SSHing in and restarting a process. This post is about the layer working on turning "a pipe that accepts pixels" into something closer to an actual product: [GRID](https://github.com/mtlevine0/grid), a wall of independent live widgets with a physical remote.
+[Part one]({{< ref "posts/video-wall/part-1-driver" >}}) of this series covered `colorlightpy`: a driver that will take any well-formed stream of raw RGB frames and put it reliably on a wall-mounted 384×192 LED display. That's necessary, but it says nothing about *what* to show, or how to switch between things without SSHing in and restarting a process. This post is about the layer working on turning "a pipe that accepts pixels" into something closer to an actual product: [GRID](https://github.com/mtlevine0/grid), a wall of independent live widgets with a physical remote.
 
 ## What GRID is
 
