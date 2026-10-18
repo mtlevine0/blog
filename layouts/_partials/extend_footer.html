@@ -1,3 +1,15 @@
+<!-- Post tree: open in the left margin on wide screens, collapsed toggle on
+     narrow ones. Breakpoint matches .post-tree in custom.css. -->
+<script>
+(function () {
+    var tree = document.querySelector(".post-tree");
+    if (!tree) return;
+    var wide = window.matchMedia("(min-width: 1300px)");
+    function sync() { tree.open = wide.matches; }
+    sync();
+    wide.addEventListener("change", sync);
+})();
+</script>
 <!-- Click-to-enlarge lightbox for post images. Vanilla JS, no dependencies. -->
 <script>
 (function () {

@@ -1,0 +1,50 @@
+{{- /*
+  Site-wide post tree, shown in the left margin on wide screens and as a
+  collapsed "All posts" toggle above the post on narrow ones (see post-tree
+  in custom.css and extend_footer.html).
+
+  Series are folders of page bundles under content/posts (e.g.
+  posts/video-wall/part-1-driver/). They aren't Hugo sections (no _index.md,
+  so /posts/ keeps listing every part), so posts are grouped by the folder
+  their bundle sits in. Titles of the form "Series, Part N: Subtitle" are
+  split into a series heading and "Part N: Subtitle" entries.
+*/ -}}
+{{- $current := . }}
+{{- $posts := where site.RegularPages "Section" "posts" }}
+{{- $seen := slice }}
+<details class="post-tree">
+  <summary>All posts</summary>
+  <nav aria-label="All posts">
+    <ul>
+      {{- range $posts.ByDate.Reverse }}
+      {{- $dir := strings.TrimSuffix "/" .File.Dir }}
+      {{- if eq .BundleType "leaf" }}{{ $dir = path.Dir $dir }}{{ end }}
+      {{- if eq $dir "posts" }}
+      <li{{ if eq .Permalink $current.Permalink }} class="active"{{ end }}>
+        <a href="{{ .RelPermalink }}"{{ if eq .Permalink $current.Permalink }} aria-current="page"{{ end }}>{{ .LinkTitle }}</a>
+      </li>
+      {{- else if not (in $seen $dir) }}
+      {{- $seen = $seen | append $dir }}
+      {{- $members := (where $posts "File.Dir" "like" (printf "^%s/" $dir)).ByDate }}
+      {{- $series := index (split (index $members 0).LinkTitle ", Part ") 0 }}
+      {{- if eq $series (index $members 0).LinkTitle }}{{ $series = path.Base $dir | humanize | title }}{{ end }}
+      {{- $open := in $members $current }}
+      <li class="series">
+        <details{{ if $open }} open{{ end }}>
+          <summary>{{ $series }}</summary>
+          <ul>
+            {{- range $members }}
+            {{- $label := .LinkTitle }}
+            {{- with strings.TrimPrefix (printf "%s, " $series) $label }}{{ $label = . }}{{ end }}
+            <li{{ if eq .Permalink $current.Permalink }} class="active"{{ end }}>
+              <a href="{{ .RelPermalink }}"{{ if eq .Permalink $current.Permalink }} aria-current="page"{{ end }}>{{ $label }}</a>
+            </li>
+            {{- end }}
+          </ul>
+        </details>
+      </li>
+      {{- end }}
+      {{- end }}
+    </ul>
+  </nav>
+</details>

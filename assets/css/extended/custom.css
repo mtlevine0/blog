@@ -96,3 +96,81 @@
     font-size: 0.9em;
     color: var(--secondary);
 }
+
+/* Post tree (see layouts/_partials/post_tree.html). Narrow screens get a
+   collapsed "All posts" toggle above the post; wide screens pin it in the
+   left margin, opened by extend_footer.html. */
+.post-tree {
+    margin-bottom: var(--content-gap);
+    font-size: 14px;
+}
+
+.post-tree > summary {
+    cursor: pointer;
+    color: var(--secondary);
+    font-weight: 500;
+}
+
+.post-tree ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.post-tree > nav > ul {
+    margin-top: 8px;
+}
+
+.post-tree li {
+    margin: 4px 0;
+    line-height: 1.4;
+}
+
+.post-tree .series ul {
+    padding-left: 12px;
+    border-left: 1px solid var(--tertiary);
+}
+
+.post-tree .series summary {
+    cursor: pointer;
+    color: var(--primary);
+}
+
+.post-tree a {
+    color: var(--secondary);
+}
+
+.post-tree a:hover {
+    color: var(--primary);
+}
+
+.post-tree .active > a {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* Margin beside the content column: (viewport - main column) / 2 must fit
+   the 240px tree plus a gap, which starts around 1300px. */
+@media (min-width: 1300px) {
+    .post-tree {
+        position: fixed;
+        top: calc(var(--header-height) + var(--gap));
+        left: calc(50% - var(--main-width) / 2 - var(--gap) - 264px);
+        width: 240px;
+        max-height: calc(100vh - var(--header-height) - var(--gap) * 2);
+        overflow-y: auto;
+        margin: 0;
+    }
+
+    .post-tree > summary {
+        list-style: none;
+        pointer-events: none;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 0.05em;
+    }
+
+    .post-tree > summary::-webkit-details-marker {
+        display: none;
+    }
+}

@@ -18,6 +18,7 @@ buildDrafts = false
   ShowShareButtons = false
   ShowPostNavLinks = true
   ShowBreadCrumbs = false
+  ShowPostTree = true
   ShowCodeCopyButtons = true
   ShowRssButtonInSectionTermList = true
 
