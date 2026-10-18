@@ -58,8 +58,6 @@ y = y_2d
 z = x_2d * np.sin(theta)
 ```
 
-Because the lidar sees a full circle, half a turn of the platform covers every direction: the front half of the circle sweeps one hemisphere and the back half sweeps the other. A scan runs from 0° to 180° in 0.5° steps (361 slices), and with a one-second settle at every stop it takes the better part of ten minutes.
-
 Each scan is saved as an ASCII PLY file, which opens directly in MeshLab or CloudCompare.
 
 ![Uncolored point cloud of a small office, shaded by height, viewed from above with the ceiling cropped away](hls-lfcd2-office-scan-uncolored.png "An HLS-LFCD2 scan of my office with no color. Ceiling cropped away.")
@@ -82,9 +80,11 @@ The camera's field of view is much narrower than the lidar's full circle, so onl
 ![Colored point cloud of a small office seen from above, with the ceiling and the two nearest walls cut away](hls-lfcd2-office-scan.png "The same office scan with color from the camera, seen from a different angle with the ceiling and the two nearest walls cut away. Most of the yellow placeholder points were on the ceiling.")
 
 # Stitching rooms together
-One scan only sees what's in line of sight from one spot. To capture more than one room, I took several scans from different places and aligned them by hand in MeshLab, then merged them into one cloud. It worked, and it was the first time the scanner produced something that looked like a floor plan: the image at the top of this post is the whole main floor, merged this way. But lining up each scan by eye was slow and never quite exact.
+One scan only sees what's in line of sight from one spot. To capture more than one room and reduce blind spots, I took several scans from different places and aligned them by hand in MeshLab, then merged them into one cloud. The image at the top of this post is the whole main floor, merged this way. But lining up each scan by eye was slow and never quite exact.
 
 {{< video src="kitchen-three-scan-orbit.mp4" poster="kitchen-three-scan-orbit-poster.jpg" loop="true" caption="The kitchen, merged by hand from three HLS-LFCD2 scans taken from different spots. Ceiling cropped away, and the walls nearest the camera are hidden as it orbits." >}}
+
+{{< video src="main-floor-multiscan-orbit.mp4" poster="main-floor-multiscan-orbit-poster.jpg" loop="true" caption="The merged main floor from the cover image, orbited from above with the ceiling cropped away." >}}
 
 # What's next
 This prototype answered the question it was built for. A surplus 2D lidar on a 3D-printed turntable can capture a recognizable, colored 3D room, and a few scans stitched together start to look like the dollhouse views I was after. It also showed how far this version was from that goal:
