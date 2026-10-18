@@ -58,7 +58,9 @@ y = y_2d
 z = x_2d * np.sin(theta)
 ```
 
-Each scan is saved as an ASCII PLY file, which opens directly in MeshLab or CloudCompare.
+Because the lidar sees a full circle, half a turn of the platform would be enough to cover every direction. The camera only looks one way, though, so a scan turns the full 360° in 0.5° steps to let it see the whole room. With a one-second settle at every stop, that takes about fifteen minutes.
+
+Each scan is saved as an ASCII PLY file, which opens directly in MeshLab or CloudCompare. I tested it at home, starting with my office and then the rest of the main floor.
 
 ![Uncolored point cloud of a small office, shaded by height, viewed from above with the ceiling cropped away](hls-lfcd2-office-scan-uncolored.png "An HLS-LFCD2 scan of my office with no color. Ceiling cropped away.")
 
@@ -90,7 +92,7 @@ One scan only sees what's in line of sight from one spot. To capture more than o
 This prototype answered the question it was built for. A surplus 2D lidar on a 3D-printed turntable can capture a recognizable, colored 3D room, and a few scans stitched together start to look like the dollhouse views I was after. It also showed how far this version was from that goal:
 
 - **Resolution.** The HLS-LFCD2 takes one reading per degree, so at 3 meters neighboring points are about 5 cm apart. Walls and large furniture come through, but anything smaller turns into noise.
-- **Speed.** Every stop waits a second for the platform to settle and keeps just one revolution of data. A single room takes the better part of ten minutes.
+- **Speed.** Every stop waits a second for the platform to settle and keeps just one revolution of data. A single room takes about fifteen minutes.
 - **Color.** One column of pixels per frame colors only part of each slice, and every alignment correction was a number tuned by eye.
 - **Merging.** Aligning scans by hand doesn't scale past a few rooms.
 
