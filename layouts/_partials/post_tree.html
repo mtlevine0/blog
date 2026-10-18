@@ -7,7 +7,8 @@
   posts/video-wall/part-1-driver/). They aren't Hugo sections (no _index.md,
   so /posts/ keeps listing every part), so posts are grouped by the folder
   their bundle sits in. Titles of the form "Series, Part N: Subtitle" are
-  split into a series heading and "Part N: Subtitle" entries.
+  split into a series heading and "Part N: Subtitle" entries. A `series`
+  front matter param on the oldest post overrides the heading.
 */ -}}
 {{- $current := . }}
 {{- $posts := where site.RegularPages "Section" "posts" }}
@@ -28,6 +29,7 @@
       {{- $members := (where $posts "File.Dir" "like" (printf "^%s/" $dir)).ByDate }}
       {{- $series := index (split (index $members 0).LinkTitle ", Part ") 0 }}
       {{- if eq $series (index $members 0).LinkTitle }}{{ $series = path.Base $dir | humanize | title }}{{ end }}
+      {{- with (index $members 0).Params.series }}{{ $series = . }}{{ end }}
       {{- $open := in $members $current }}
       <li class="series">
         <details{{ if $open }} open{{ end }}>

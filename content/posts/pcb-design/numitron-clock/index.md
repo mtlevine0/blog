@@ -6,6 +6,8 @@ cover:
     alt: The finished six-tube IV-9 Numitron clock, tubes lit
 date: 2026-02-04
 draft: false
+aliases: ["/posts/numitron-clock/"]
+series: "PCB Design"
 tags: ["hardware", "esp32", "kicad", "pcb", "numitron", "firmware", "clock", "display", "unconventional-displays"]
 ---
 
@@ -45,7 +47,7 @@ The tubes are wired common-anode to +3.3V, with the TLC5916s sinking each segmen
 
 ### Assembling a two-sided board
 
-This was my second attempt at [PCB design and fabrication](/posts/pcb-design/), and the board came out about 3x larger than my first one. Even at that size, space was tight enough that I had to place components on both sides of the board: a hot plate reflowed the top, where most of the components live, a hot air station handled the RTC on the bottom, and the backup battery got hand-soldered in afterward. To my surprise I was able to one-shot the tiny temperature & humidity sensor, it responded immediately with no solder bridges. Soldering the USB-C socket also went smoothly, there were bridges but I simply dragged some soldering wick across the leads with my soldering iron.
+This was my second attempt at [PCB design and fabrication]({{< ref "posts/pcb-design/merrie-minstrel-choir" >}}), and the board came out about 3x larger than my first one. Even at that size, space was tight enough that I had to place components on both sides of the board: a hot plate reflowed the top, where most of the components live, a hot air station handled the RTC on the bottom, and the backup battery got hand-soldered in afterward. To my surprise I was able to one-shot the tiny temperature & humidity sensor, it responded immediately with no solder bridges. Soldering the USB-C socket also went smoothly, there were bridges but I simply dragged some soldering wick across the leads with my soldering iron.
 
 ![Bottom side of the board, showing the hand-soldered coin cell battery holder next to the hot-air-reflowed RTC](iv9-clock-bottom.jpg)
 

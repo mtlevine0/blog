@@ -6,6 +6,8 @@ cover:
     alt: Completed custom PCBs
 date: 2025-12-28
 draft: false
+aliases: ["/posts/pcb-design/"]
+series: "PCB Design"
 tags: ["hardware", "esp32", "kicad", "pcb", "oshpark", "christmas", "music"]
 ---
 
