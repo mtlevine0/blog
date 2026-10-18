@@ -1,5 +1,5 @@
 ---
-title: "IN-9 Spectrum Analyzer, Part 2: Designing the Driver Board with AI"
+title: "IN-9 Spectrum Analyzer, Part 2: Agentic Assisted EDA"
 cover:
     image: "dual-driver-3d.jpg"
     relative: true

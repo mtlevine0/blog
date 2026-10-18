@@ -107,10 +107,4 @@ Here's the whole chain running: system audio on the PC, through the `eq` mode, o
 # What's next
 The prototype answered the question it was built for. A PWM pin, an RC filter, and an op-amp current sink give smooth, stable, linear control of an IN-9's bar length, and a PC can feed three of them a live spectrum over serial at 50 updates a second.
 
-It also showed where three tubes stop scaling. The ESP8266 has about seven clean PWM pins and generates PWM in software, so ten tubes at 20kHz is beyond it. Ten tubes at 12mA each also draw about 120mA from the 150V rail, around 18W, which is more than many small boost modules are rated for. Splitting the load so each boost module drives just two tubes brings that down to about 24mA, or 3.6W per module. Part two covers the first step toward ten: a dual-channel driver board designed almost entirely by AI. Later parts cover scaling the PWM side up to ten bands and designing a physical assembly to hold the tubes. As a preview, the frame is already printed:
-
-![Seven IN-9 tubes standing in a 3D-printed frame on aluminum extrusion](frame-seven-tubes-front.jpg "First test fit of the tubes in the printed frame.")
-
-And here's a render of where it's all headed:
-
-{{< video src="render-ten-tube-concept.mp4" poster="render-ten-tube-concept-poster.jpg" loop="true" class="compact" caption="A render of where this is headed." >}}
+It also showed where three tubes stop scaling. The ESP8266 has about seven clean PWM pins and generates PWM in software, so ten tubes at 20kHz is beyond it. Ten tubes at 12mA each also draw about 120mA from the 150V rail, around 18W, which is more than many small boost modules are rated for. Splitting the load so each boost module drives just two tubes brings that down to about 24mA, or 3.6W per module. Part two covers the first step toward ten: a dual-channel driver board designed almost entirely by AI. Later parts cover scaling the PWM side up to ten bands and designing a physical assembly to hold the tubes.
