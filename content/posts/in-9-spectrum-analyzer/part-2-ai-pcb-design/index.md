@@ -1,5 +1,5 @@
 ---
-title: "IN-9 Spectrum Analyzer, Part 2: Agentic Assisted EDA"
+title: "IN-9 Spectrum Analyzer, Part 2: Agent-Assisted EDA"
 cover:
     image: "dual-driver-3d.jpg"
     relative: true
