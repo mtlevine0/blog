@@ -38,7 +38,7 @@ The single-channel prototype board from part one was laid out with Claude too, u
 I provided Claude with the following contraints:
 
 - The board can be double-sided, but only resistors, capacitors, and diodes may go on the back.
-- Boards will be fabbed in batches and mounted side by side, with jumper tabs carrying 12V, GND, and 150V from one board's power header to the next. So the power headers have to sit flush with the board edges, and their spacing is critical.
+- Boards will be fabbed in batches and mounted side by side, with jumper tabs carrying 12V and GND from one board's power header to the next. The 150V doesn't chain: each board gets its own boost PSU, so one supply drives two tubes. So the power headers have to sit flush with the board edges, and their spacing is critical.
 - At least two M2 mounting holes.
 
 From there Claude worked the placement into a 22.5 × 27 mm outline, with power headers J1 and J2 flush on the side edges, the PWM header J3 at the top, the tube terminals along the bottom, and the passives tucked underneath. The board was then routed with [Freerouting](https://github.com/freerouting/freerouting), an open-source autorouter, against the board's design rules. Those rules include the HV netclass and the custom clearance rule keeping the 150V nets 0.4mm away from everything else. Claude ran ERC and DRC after each pass; the final board is ERC clean with zero DRC errors and zero unconnected nets.

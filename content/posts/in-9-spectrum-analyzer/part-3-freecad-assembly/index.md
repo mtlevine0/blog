@@ -48,7 +48,7 @@ Each module is one C-shaped print, 44 × 37 × 65.9 mm, two tube pitches wide:
 - **Roof:** two tubes in grommets, with a 16.4 mm gap above the board for wiring the tube leads into the screw terminals.
 - **Sides:** open, so the 12V and PWM wiring runs along the row as one tunnel.
 
-The driver boards' power headers land 21.5 mm from the next board's, so neighbouring modules link with short leads. Those links should carry only 12V and GND: each module has its own PSU, and paralleling five 150V outputs isn't a good idea.
+The driver boards' power headers land 21.5 mm from the next board's, so neighbouring modules link with short leads. Those links should carry only 12V and GND: each module has its own PSU driving just its two tubes, and paralleling five 150V outputs isn't a good idea.
 
 ![v5 assembly from the front: five two-tube modules in the MakerBeam frame](assembly-v5-front.png "v5 from the driver-board side.")
 
