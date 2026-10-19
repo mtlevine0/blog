@@ -58,7 +58,10 @@
     });
 })();
 </script>
-<!-- Click-to-enlarge lightbox for post images. Vanilla JS, no dependencies. -->
+<!-- Click-to-enlarge lightbox for post images. Vanilla JS, no dependencies.
+     Drag to pan, pinch or scroll to zoom, double-tap to toggle zoom, tap to
+     close. On small screens, fitting the screen barely enlarges an image, so it
+     opens zoomed in on the tapped spot instead. -->
 <script>
 (function () {
     var overlay = document.createElement("div");
@@ -68,36 +71,187 @@
     overlay.setAttribute("aria-label", "Enlarged image");
 
     var img = document.createElement("img");
+    img.draggable = false;
     overlay.appendChild(img);
+
+    var closeBtn = document.createElement("button");
+    closeBtn.className = "lightbox-close";
+    closeBtn.setAttribute("aria-label", "Close");
+    closeBtn.textContent = "×";
+    overlay.appendChild(closeBtn);
     document.body.appendChild(overlay);
 
-    function open(thumb) {
-        img.src = thumb.currentSrc || thumb.src;
+    // The image is drawn at (x, y) in screen pixels, s screen pixels per image pixel.
+    var x = 0, y = 0, s = 1;
+    var fit = 1, zoomed = 1, maxScale = 1, pixelated = false;
+    var small = window.matchMedia("(max-width: 768px)");
+
+    function clampScale(v) {
+        return Math.min(maxScale, Math.max(fit, v));
+    }
+
+    function measure() {
+        var vw = overlay.clientWidth, vh = overlay.clientHeight;
+        var nw = img.naturalWidth, nh = img.naturalHeight;
+        var pad = small.matches ? 0 : 32;
+        fit = Math.min((vw - 2 * pad) / nw, (vh - 2 * pad) / nh);
+        maxScale = Math.max(fit * 4, pixelated ? 8 : 1);
+        // Fill the screen, and at least double the fitted size.
+        zoomed = clampScale(Math.max(vw / nw, vh / nh, fit * 2));
+    }
+
+    function render() {
+        var vw = overlay.clientWidth, vh = overlay.clientHeight;
+        var w = img.naturalWidth * s, h = img.naturalHeight * s;
+        // Center an axis that fits on screen; otherwise keep its edges off-screen.
+        x = w <= vw ? (vw - w) / 2 : Math.min(0, Math.max(vw - w, x));
+        y = h <= vh ? (vh - h) / 2 : Math.min(0, Math.max(vh - h, y));
+        img.style.width = w + "px";
+        img.style.height = h + "px";
+        img.style.transform = "translate(" + x + "px," + y + "px)";
+        overlay.classList.toggle("pannable", w > vw + 1 || h > vh + 1);
+    }
+
+    // Scale to v, keeping the image point under (px, py) in place.
+    function zoomAt(v, px, py) {
+        v = clampScale(v);
+        x = px - (px - x) * v / s;
+        y = py - (py - y) * v / s;
+        s = v;
+        render();
+    }
+
+    function show(thumb, e) {
+        img.onload = null;
+        img.classList.remove("animate");
+        measure();
+        var r = thumb.getBoundingClientRect();
+        if (small.matches && img.naturalWidth * fit < r.width * 1.5) {
+            var fx = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+            var fy = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+            s = zoomed;
+            x = e.clientX - fx * img.naturalWidth * s;
+            y = e.clientY - fy * img.naturalHeight * s;
+        } else {
+            s = fit;
+        }
+        render();
+    }
+
+    function open(thumb, e) {
+        var style = getComputedStyle(thumb).imageRendering;
+        pixelated = style !== "auto";
+        img.style.imageRendering = style;
         img.alt = thumb.alt;
-        img.style.imageRendering = getComputedStyle(thumb).imageRendering;
+        img.src = thumb.currentSrc || thumb.src;
         overlay.hidden = false;
         document.body.style.overflow = "hidden";
+        if (img.complete && img.naturalWidth) show(thumb, e);
+        else img.onload = function () { show(thumb, e); };
     }
 
     function close() {
+        clearTimeout(tapTimer);
+        tapTimer = null;
+        pointers.clear();
         overlay.hidden = true;
-        img.src = "";
+        img.onload = null;
+        img.removeAttribute("src");
         document.body.style.overflow = "";
     }
 
     document.addEventListener("click", function (e) {
         var thumb = e.target.closest(".post-content img");
-        if (thumb) {
-            open(thumb);
-            return;
-        }
-        if (!overlay.hidden && overlay.contains(e.target)) {
-            close();
-        }
+        if (thumb) open(thumb, e);
     });
 
     document.addEventListener("keydown", function (e) {
         if (e.key === "Escape" && !overlay.hidden) close();
+    });
+
+    window.addEventListener("resize", function () {
+        if (overlay.hidden || !img.naturalWidth) return;
+        var atFit = s <= fit * 1.001;
+        measure();
+        s = atFit ? fit : clampScale(s);
+        render();
+    });
+
+    // Drag and pinch. Each gesture remembers where it started; adding or
+    // lifting a finger starts a new one from the current view.
+    var pointers = new Map();
+    var gesture = null;
+    var moved = false;
+
+    function begin() {
+        var pts = Array.from(pointers.values());
+        var cx = 0, cy = 0;
+        pts.forEach(function (p) { cx += p.x / pts.length; cy += p.y / pts.length; });
+        var dist = pts.length > 1 ? Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) : 0;
+        gesture = { cx: cx, cy: cy, dist: dist, x: x, y: y, s: s };
+    }
+
+    overlay.addEventListener("pointerdown", function (e) {
+        if (e.target === closeBtn) return;
+        if (!pointers.size) moved = false;
+        pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        overlay.setPointerCapture(e.pointerId);
+        img.classList.remove("animate");
+        begin();
+    });
+
+    overlay.addEventListener("pointermove", function (e) {
+        if (!pointers.has(e.pointerId)) return;
+        pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        var pts = Array.from(pointers.values());
+        var cx = 0, cy = 0;
+        pts.forEach(function (p) { cx += p.x / pts.length; cy += p.y / pts.length; });
+        if (!moved && (pts.length > 1 || Math.hypot(cx - gesture.cx, cy - gesture.cy) > 6)) {
+            moved = true;
+            overlay.classList.add("dragging");
+        }
+        if (!moved) return;
+        var v = gesture.s;
+        if (pts.length > 1 && gesture.dist) {
+            v = clampScale(gesture.s * Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) / gesture.dist);
+        }
+        x = cx - (gesture.cx - gesture.x) * v / gesture.s;
+        y = cy - (gesture.cy - gesture.y) * v / gesture.s;
+        s = v;
+        render();
+    });
+
+    function lift(e) {
+        if (!pointers.delete(e.pointerId)) return;
+        if (pointers.size) begin();
+        else overlay.classList.remove("dragging");
+    }
+    overlay.addEventListener("pointerup", lift);
+    overlay.addEventListener("pointercancel", lift);
+
+    overlay.addEventListener("wheel", function (e) {
+        e.preventDefault();
+        img.classList.remove("animate");
+        zoomAt(s * Math.exp(-e.deltaY * 0.002), e.clientX, e.clientY);
+    }, { passive: false });
+
+    // A tap closes, but wait briefly in case it's the first half of a double-tap.
+    var tapTimer = null;
+    overlay.addEventListener("click", function (e) {
+        if (moved) return;
+        if (tapTimer) {
+            clearTimeout(tapTimer);
+            tapTimer = null;
+            img.classList.add("animate");
+            zoomAt(s > fit * 1.05 ? fit : zoomed, e.clientX, e.clientY);
+            return;
+        }
+        tapTimer = setTimeout(close, 250);
+    });
+
+    closeBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        close();
     });
 })();
 </script>

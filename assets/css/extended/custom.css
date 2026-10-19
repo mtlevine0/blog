@@ -35,12 +35,12 @@
 .lightbox-overlay {
     position: fixed;
     inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2em;
+    overflow: hidden;
     background: rgba(0, 0, 0, 0.9);
     cursor: zoom-out;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
     z-index: 1000;
 }
 
@@ -48,13 +48,42 @@
     display: none;
 }
 
+.lightbox-overlay.pannable {
+    cursor: grab;
+}
+
+.lightbox-overlay.dragging {
+    cursor: grabbing;
+}
+
 .lightbox-overlay img {
-    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
     margin: 0;
-    max-width: 100%;
-    max-height: 100%;
-    cursor: zoom-out;
+    max-width: none;
+    max-height: none;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+    -webkit-user-drag: none;
+}
+
+.lightbox-overlay img.animate {
+    transition: width 0.2s ease, height 0.2s ease, transform 0.2s ease;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-size: 28px;
+    line-height: 40px;
+    text-align: center;
+    z-index: 1;
 }
 
 /* Mermaid diagrams: drop the code-block styling PaperMod gives <pre>. */
