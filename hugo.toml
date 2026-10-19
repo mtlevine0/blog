@@ -32,6 +32,10 @@ Personal projects and learnings I think are worth sharing.
   name = "github"
   url = "https://github.com/mtlevine0"
 
+[[params.socialIcons]]
+  name = "linkedin"
+  url = "https://www.linkedin.com/in/matt-levine-a0a38188"
+
 [menu]
   [[menu.main]]
     name = "Posts"
