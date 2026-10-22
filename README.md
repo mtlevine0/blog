@@ -49,6 +49,8 @@ content/posts/in-9-spectrum-analyzer/
     └── three-band-demo.mp4
 ```
 
+To also list a post under other groups in the post tree, add `groups: ["pcb-design"]` to its front matter. Each name is a series folder; a name with no folder creates a new group.
+
 Reference assets by bare filename; the image render hook and `video` shortcode resolve them to the bundle's URL. Older posts still use `/images/...` paths under `static/`, which keep working.
 
 ```markdown

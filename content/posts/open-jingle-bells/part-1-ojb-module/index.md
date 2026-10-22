@@ -1,13 +1,13 @@
 ---
-title: "My Introduction to PCB Design"
+title: "Part 1: My Introduction to PCB Design"
 cover:
-    image: "merrie-minstreal-choir-pcb-hero.JPG"
+    image: "caroling-christmas-bells-box.jpg"
     relative: true
-    alt: Completed custom PCBs
+    alt: The lid of a Ye Merry Minstrel Caroling Christmas Bells box, red and green with gold bells around the title
 date: 2025-12-28
 draft: false
-aliases: ["/posts/pcb-design/"]
-series: "PCB Design"
+aliases: ["/posts/pcb-design/", "/posts/pcb-design/merrie-minstrel-choir/", "/posts/pcb-design/open-jingle-bells/"]
+series: "Open Jingle Bells"
 tags: ["hardware", "esp32", "kicad", "pcb", "oshpark", "christmas", "music"]
 ---
 
@@ -35,7 +35,7 @@ I used KiCad to lay out the board. Most of the design work was routing the ESP32
 
 To verify the fit before ordering boards, I used KiCad's 3D render export to generate a model of the design and test-fit it with a 3D print. That step caught a clearance issue I would have otherwise discovered only after the boards came back from the fab.
 
-![PCB render](https://github.com/mtlevine0/merrie-minstrel-choir/raw/main/docs/render.JPG)
+![PCB render](https://github.com/mtlevine0/open-jingle-bells/raw/main/docs/render.JPG)
 
 ## Getting It Made at OSH Park
 
@@ -44,17 +44,17 @@ I ordered the boards through [OSH Park](https://oshpark.com), which was a natura
 The boards came back clean. Soldering the ESP32 and a handful of passives was straightforward, and the edge connector seated perfectly.
 
 ![PCB Close Up](esp32_bells_module.JPG)
-![Assembled PCB](https://github.com/mtlevine0/merrie-minstrel-choir/raw/main/docs/assembled.JPG)
+![Assembled PCB](https://github.com/mtlevine0/open-jingle-bells/raw/main/docs/assembled.JPG)
 
 ## The Firmware
 
-The firmware has three variants under [`firmware/`](https://github.com/mtlevine0/merrie-minstrel-choir/tree/main/firmware):
+The firmware has three variants under [`firmware/`](https://github.com/mtlevine0/open-jingle-bells/tree/main/firmware):
 
 - **Transmitter** — broadcasts note data over ESP-NOW to all receivers in range
 - **Receiver** — runs on each bell unit, plays notes as they arrive
 - **ROM-dumper** — extracts the original cartridge contents over serial, in case you want to study or preserve the song data
 
-All the hardware files are in [`hardware/`](https://github.com/mtlevine0/merrie-minstrel-choir/tree/main/hardware) if you want to build one or use the design as a starting point. Full writeup on [Hackaday.io](https://hackaday.io/project/205003-merrie-minstrel-choir), source on [GitHub](https://github.com/mtlevine0/merrie-minstrel-choir).
+All the hardware files are in [`hardware/`](https://github.com/mtlevine0/open-jingle-bells/tree/main/hardware) if you want to build one or use the design as a starting point. Full writeup on [Hackaday.io](https://hackaday.io/project/205003-merrie-minstrel-choir), source on [GitHub](https://github.com/mtlevine0/open-jingle-bells).
 
 ## A Software Engineer's Perspective
 

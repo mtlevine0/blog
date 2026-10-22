@@ -9,6 +9,11 @@
   their bundle sits in. Titles of the form "Series, Part N: Subtitle" are
   split into a series heading and "Part N: Subtitle" entries. A `series`
   front matter param on the oldest post overrides the heading.
+
+  A post can also be listed under other groups with a `groups` front matter
+  list of folder names (e.g. groups: ["pcb-design"]). A name with no folder
+  behind it makes a group of its own, headed by the humanized name. A group
+  sits at the position of its newest member, cross-listed posts included.
 */ -}}
 {{- $current := . }}
 {{- $posts := where site.RegularPages "Section" "posts" }}
@@ -20,16 +25,27 @@
       {{- range $posts.ByDate.Reverse }}
       {{- $dir := strings.TrimSuffix "/" .File.Dir }}
       {{- if eq .BundleType "leaf" }}{{ $dir = path.Dir $dir }}{{ end }}
-      {{- if eq $dir "posts" }}
+      {{- $keys := slice }}
+      {{- if ne $dir "posts" }}{{ $keys = $keys | append (path.Base $dir) }}{{ end }}
+      {{- with .Params.groups }}{{ $keys = $keys | append . }}{{ end }}
+      {{- if not $keys }}
       <li{{ if eq .Permalink $current.Permalink }} class="active"{{ end }}>
         <a href="{{ .RelPermalink }}"{{ if eq .Permalink $current.Permalink }} aria-current="page"{{ end }}>{{ .LinkTitle }}</a>
       </li>
-      {{- else if not (in $seen $dir) }}
-      {{- $seen = $seen | append $dir }}
-      {{- $members := (where $posts "File.Dir" "like" (printf "^%s/" $dir)).ByDate }}
-      {{- $series := index (split (index $members 0).LinkTitle ", Part ") 0 }}
-      {{- if eq $series (index $members 0).LinkTitle }}{{ $series = path.Base $dir | humanize | title }}{{ end }}
-      {{- with (index $members 0).Params.series }}{{ $series = . }}{{ end }}
+      {{- end }}
+      {{- range $keys }}
+      {{- if not (in $seen .) }}
+      {{- $seen = $seen | append . }}
+      {{- $native := (where $posts "File.Dir" "like" (printf "^posts/%s/" .)).ByDate }}
+      {{- $members := (union $native (where $posts "Params.groups" "intersect" (slice .))).ByDate }}
+      {{- $series := . | humanize | title }}
+      {{- with $native }}
+      {{- $first := index . 0 }}
+      {{- $series = path.Base (path.Dir (strings.TrimSuffix "/" $first.File.Dir)) | humanize | title }}
+      {{- $split := index (split $first.LinkTitle ", Part ") 0 }}
+      {{- if ne $split $first.LinkTitle }}{{ $series = $split }}{{ end }}
+      {{- with $first.Params.series }}{{ $series = . }}{{ end }}
+      {{- end }}
       {{- $open := in $members $current }}
       <li class="series">
         <details{{ if $open }} open{{ end }}>
@@ -45,6 +61,7 @@
           </ul>
         </details>
       </li>
+      {{- end }}
       {{- end }}
       {{- end }}
     </ul>
