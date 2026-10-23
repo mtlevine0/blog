@@ -1,0 +1,25 @@
+{{- /*
+  Returns the name of the series a page belongs to, or "" if none.
+
+  A page is in a series if it sets `series` in front matter, or if its
+  bundle sits in a folder under posts/ (e.g. posts/video-wall/part-1-driver/).
+  Without `series`, the name comes from the folder's first post: its
+  `series`, else its title before ", Part ", else the humanized folder name.
+*/ -}}
+{{- $name := "" }}
+{{- with .Params.series }}
+{{- $name = cond (reflect.IsSlice .) (index . 0) . }}
+{{- else }}
+{{- with .File }}
+{{- $dir := strings.TrimSuffix "/" .Dir }}
+{{- if eq $.BundleType "leaf" }}{{ $dir = path.Dir $dir }}{{ end }}
+{{- if strings.HasPrefix $dir "posts/" }}
+{{- $first := index (where site.RegularPages "File.Dir" "like" (printf "^%s/" $dir)).ByDate 0 }}
+{{- $name = path.Base $dir | humanize | title }}
+{{- $split := index (split $first.LinkTitle ", Part ") 0 }}
+{{- if ne $split $first.LinkTitle }}{{ $name = $split }}{{ end }}
+{{- with $first.Params.series }}{{ $name = cond (reflect.IsSlice .) (index . 0) . }}{{ end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- return $name }}

@@ -74,6 +74,9 @@
   {{- partial "cover.html" (dict "cxt" . "IsSingle" false "isHidden" $isHidden) }}
   <header class="entry-header">
     <h2 class="entry-hint-parent">
+      {{- /* Lead with the series name unless the title already does. */}}
+      {{- $series := partialCached "series_name.html" . .Permalink }}
+      {{- if and $series (not (strings.HasPrefix .Title (printf "%s, " $series))) }}{{ $series }}, {{ end }}
       {{- .Title }}
       {{- if .Draft }}
       <span class="entry-hint" title="Draft">

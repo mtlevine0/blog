@@ -1,38 +1,9 @@
-{{- /*
-  Series box under the post. A post is in a series if it sets `series` in
-  front matter, or if its bundle sits in a folder under posts/ (e.g.
-  posts/video-wall/part-1-driver/). Without `series`, the name comes from
-  the folder's first post: its `series`, else its title before ", Part ",
-  else the humanized folder name.
-*/ -}}
-{{- $dirOf := dict }}
-{{- range site.RegularPages }}
-{{- $dir := strings.TrimSuffix "/" .File.Dir }}
-{{- if eq .BundleType "leaf" }}{{ $dir = path.Dir $dir }}{{ end }}
-{{- $dirOf = merge $dirOf (dict .Permalink (cond (strings.HasPrefix $dir "posts/") $dir "")) }}
-{{- end }}
-{{- $myDir := index $dirOf .Permalink }}
-{{- $siblings := slice }}
-{{- with $myDir }}
-{{- range site.RegularPages.ByDate }}{{ if eq (index $dirOf .Permalink) $myDir }}{{ $siblings = $siblings | append . }}{{ end }}{{ end }}
-{{- end }}
-{{- $seriesName := "" }}
-{{- with .Params.series }}
-{{- $seriesName = cond (reflect.IsSlice .) (index . 0) . }}
-{{- else }}
-{{- with $siblings }}
-{{- $first := index . 0 }}
-{{- $seriesName = path.Base $myDir | humanize | title }}
-{{- $split := index (split $first.LinkTitle ", Part ") 0 }}
-{{- if ne $split $first.LinkTitle }}{{ $seriesName = $split }}{{ end }}
-{{- with $first.Params.series }}{{ $seriesName = cond (reflect.IsSlice .) (index . 0) . }}{{ end }}
-{{- end }}
-{{- end }}
-{{- with $seriesName }}
+{{- /* Series box under the post; see series_name.html for what makes a series. */ -}}
+{{- with partialCached "series_name.html" . .Permalink }}
+{{- $seriesName := . }}
 {{- $allInSeries := slice }}
 {{- range site.RegularPages.ByDate }}
-{{- $s := .Params.series }}
-{{- if or (in $siblings .) (eq $s $seriesName) (and (reflect.IsSlice $s) (in $s $seriesName)) }}{{ $allInSeries = $allInSeries | append . }}{{ end }}
+{{- if eq (partialCached "series_name.html" . .Permalink) $seriesName }}{{ $allInSeries = $allInSeries | append . }}{{ end }}
 {{- end }}
 {{- if gt (len $allInSeries) 1 }}
 <div class="series-box" style="margin-bottom: var(--content-gap); background: var(--code-bg); border-radius: var(--radius); border: 1px solid var(--border); padding: 0.8rem 1.2rem;">
