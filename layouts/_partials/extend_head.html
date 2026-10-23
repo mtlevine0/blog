@@ -13,14 +13,15 @@ import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.es
 var blocks = document.querySelectorAll("pre.mermaid");
 blocks.forEach(function (el) { el.dataset.source = el.textContent; });
 
-function render() {
-    var dark = document.body.classList.contains("dark");
+// PaperMod marks the active theme with <html data-theme="dark|light">.
+// Each diagram gets a fixed id; mermaid's own ids are clock-based and can collide.
+async function render() {
+    var dark = document.documentElement.dataset.theme === "dark";
     mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "neutral" });
-    blocks.forEach(function (el) {
-        el.removeAttribute("data-processed");
-        el.textContent = el.dataset.source;
-    });
-    mermaid.run({ nodes: blocks });
+    for (var i = 0; i < blocks.length; i++) {
+        var out = await mermaid.render("mermaid-diagram-" + i, blocks[i].dataset.source);
+        blocks[i].innerHTML = out.svg;
+    }
 }
 
 render();
