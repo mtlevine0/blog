@@ -5,7 +5,7 @@ cover:
     relative: true
     alt: Three purple Open Jingle Bells boards on a dark table, labeled conductor, clock master and follower. Dashed STATE arrows run from the conductor to the other two, and TIME arrows run from the conductor and the follower to the clock master.
 date: 2026-10-21
-draft: true
+draft: false
 tags: ["esp32", "firmware", "wifi", "udp", "clock-sync", "freertos", "christmas", "music"]
 description: "New bell firmware where every unit carries the songs and plays them itself, while a shared group clock and a conductor keep them together over a Wi-Fi LAN."
 ---
@@ -205,3 +205,5 @@ Over USB serial, `sync` prints the roles, the clock and the peer table. `drop 80
 The units sync and play together on real hardware, but I haven't measured how closely yet. The target is under 2 ms of skew between units, checked with a logic analyzer on the same bell line of two boards. I also want to repeat the test with a power-saving phone on the network, with packet drop turned up, and with the master unplugged mid-song.
 
 There's one known gap. If the conductor disappears, the others carry on with the timeline they last heard. A unit that joins after that never hears STATE and stays idle. The fix is a takeover: after 3 s without STATE, the lowest synced MAC picks up the same timeline with a higher epoch and carries on. Firmware updates over the network and a password for the settings pages are also on the list.
+
+In the next post, the bells get new songs without a laptop. Every unit now serves a composer: tap out a tune on a phone, press Play, and the whole group fetches it and plays along.
