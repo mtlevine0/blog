@@ -1,5 +1,5 @@
 ---
-title: "Open-Source Video Wall, Part 1: Reverse-Engineering the Driver"
+title: "Open Video Wall, Part 1: Reverse-Engineering the Driver"
 cover:
     image: "led-wall-hero.JPG"
     relative: true

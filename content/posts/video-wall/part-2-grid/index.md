@@ -1,5 +1,5 @@
 ---
-title: "Open-Source Video Wall, Part 2: Displaying Content"
+title: "Open Video Wall, Part 2: Displaying Content"
 cover:
     image: "grid-diagram.png"
     relative: true
