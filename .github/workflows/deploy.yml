@@ -30,6 +30,9 @@ jobs:
 
       - name: Build
         run: hugo --minify
+        env:
+          HUGO_PARAMS_BUILDID: ${{ github.run_number }}
+          HUGO_PARAMS_COMMIT: ${{ github.sha }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
