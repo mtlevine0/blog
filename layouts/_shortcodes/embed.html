@@ -1,0 +1,16 @@
+{{- /* A live page in an iframe, styled like a captioned image.
+     {{< embed src="/embeds/foo.html" title="Foo demo" height="720" caption="Shown under it" >}}
+   src resolves to a file in the post's page bundle, else is used as-is
+   (static/ files are served from the site root).
+   height is in px (default 600). maxwidth caps the width in px, e.g. 420 for
+   a phone-sized page; the frame is full width when left out. */ -}}
+{{- $src := .Get "src" -}}
+{{- with .Page.Resources.Get $src }}{{ $src = .RelPermalink }}{{ end -}}
+{{- $style := printf "height: %spx;" (.Get "height" | default "600") -}}
+{{- with .Get "maxwidth" }}{{ $style = printf "%s max-width: %spx;" $style . }}{{ end -}}
+<figure class="post-figure">
+  <iframe class="post-embed" src="{{ $src }}" title="{{ .Get "title" }}" style="{{ $style | safeCSS }}" loading="lazy" allow="autoplay"></iframe>
+  {{- with .Get "caption" }}
+  <figcaption>{{ . | markdownify }}</figcaption>
+  {{- end }}
+</figure>

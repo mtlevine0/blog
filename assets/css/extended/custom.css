@@ -111,6 +111,15 @@
     max-height: 600px;
 }
 
+/* Live pages in an iframe (see layouts/_shortcodes/embed.html) */
+.post-content iframe.post-embed {
+    display: block;
+    width: 100%;
+    margin: 1.5em auto 0.5em;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
 /* Captioned images (see layouts/_markup/render-image.html) */
 .post-content .post-figure {
     margin: 1.5em 0;
