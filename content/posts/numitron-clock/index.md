@@ -1,5 +1,5 @@
 ---
-title: "Building a Six-Tube IV-9 Numitron Clock - My Second Attempt at PCB Design"
+title: "IV-9 Numitron Clock"
 cover:
     image: "iv9-clock.JPG"
     relative: true
@@ -7,7 +7,6 @@ cover:
 date: 2026-02-04
 draft: false
 aliases: ["/posts/pcb-design/numitron-clock/"]
-series: "PCB Design"
 tags: ["hardware", "esp32", "kicad", "pcb", "numitron", "firmware", "clock", "display", "unconventional-displays"]
 ---
 
