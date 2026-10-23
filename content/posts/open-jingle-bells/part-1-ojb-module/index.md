@@ -7,7 +7,6 @@ cover:
 date: 2025-12-28
 draft: false
 aliases: ["/posts/pcb-design/", "/posts/pcb-design/merrie-minstrel-choir/", "/posts/pcb-design/open-jingle-bells/"]
-series: "Open Jingle Bells"
 tags: ["hardware", "esp32", "kicad", "pcb", "oshpark", "christmas", "music"]
 ---
 

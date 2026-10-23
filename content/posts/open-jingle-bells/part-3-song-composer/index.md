@@ -6,7 +6,6 @@ cover:
     alt: Three phone screenshots of the Open Jingle Bells composer on a dark background. Each shows a grid of colored bell lanes labeled C6 to E7, with round strikes and fading trails running down the screen. The middle one is playing, with a playhead line across the grid.
 date: 2026-10-22
 draft: true
-series: "Open Jingle Bells"
 tags: ["esp32", "firmware", "web", "web-audio", "littlefs", "christmas", "music"]
 description: "Every bell unit now serves a phone-first composer. Songs written on it save to the unit's flash, and the whole group fetches them and plays along."
 ---

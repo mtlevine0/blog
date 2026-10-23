@@ -6,7 +6,6 @@ cover:
     alt: Three purple Open Jingle Bells boards on a dark table, labeled conductor, clock master and follower. Dashed STATE arrows run from the conductor to the other two, and TIME arrows run from the conductor and the follower to the clock master.
 date: 2026-10-21
 draft: true
-series: "Open Jingle Bells"
 tags: ["esp32", "firmware", "wifi", "udp", "clock-sync", "freertos", "christmas", "music"]
 description: "New bell firmware where every unit carries the songs and plays them itself, while a shared group clock and a conductor keep them together over a Wi-Fi LAN."
 ---
