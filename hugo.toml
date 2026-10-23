@@ -12,7 +12,7 @@ buildDrafts = false
 
 [params]
   author = "Matt Levine"
-  description = "Personal blog"
+  description = "Build logs from Matt Levine's electronics side projects: display tubes, LEDs, lidar, custom PCBs and firmware."
   defaultTheme = "auto"
   ShowReadingTime = true
   ShowShareButtons = false
@@ -23,9 +23,9 @@ buildDrafts = false
   ShowRssButtonInSectionTermList = true
 
 [params.homeInfoParams]
-  Title = "Matt Levine - Engineer & Creator"
+  Title = "Hi, I'm Matt 👋"
   Content = """
-Personal projects and learnings I think are worth sharing.
+Build logs from my side projects: vintage display tubes, LEDs, lidar, custom PCBs and firmware. Each project is written up one milestone at a time.
 """
 
 [[params.socialIcons]]
