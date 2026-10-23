@@ -230,3 +230,33 @@
     text-transform: uppercase;
     color: var(--secondary);
 }
+
+/* Draft badge. PaperMod marks drafts in the post header and post list with a
+   faint pencil icon pushed to the far edge; replace it with a labelled pill
+   beside the title. Drafts only render under `hugo -D`. */
+.entry-hint-parent {
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0 0.5em;
+}
+
+.entry-hint svg {
+    display: none;
+}
+
+.entry-hint::after {
+    content: "Draft";
+    display: inline-block;
+    padding: 2px 8px;
+    border: 1px solid var(--tertiary);
+    border-radius: 999px;
+    background: var(--code-bg);
+    color: var(--secondary);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    line-height: 1.4;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
