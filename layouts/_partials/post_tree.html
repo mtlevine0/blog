@@ -12,48 +12,58 @@
 
   A post can also be listed under other groups with a `groups` front matter
   list of folder names (e.g. groups: ["pcb-design"]). A name with no folder
-  behind it makes a group of its own, headed by the humanized name. A group
-  sits at the position of its newest member, cross-listed posts included.
+  behind it makes a group of its own, headed by the humanized name. Words in
+  $acronyms below are kept in capitals in any heading.
+
+  Groups are sorted by heading, numbers before letters (A-Z, ignoring case).
+  Posts in no group are collected into an "Other posts" group, which always
+  comes last.
 */ -}}
 {{- $current := . }}
 {{- $posts := where site.RegularPages "Section" "posts" }}
-{{- $seen := slice }}
+{{- $acronyms := slice "PCB" }}
+{{- $keys := slice }}
+{{- $ungrouped := slice }}
+{{- range $posts.ByDate.Reverse }}
+{{- $dir := strings.TrimSuffix "/" .File.Dir }}
+{{- if eq .BundleType "leaf" }}{{ $dir = path.Dir $dir }}{{ end }}
+{{- $own := slice }}
+{{- if ne $dir "posts" }}{{ $own = $own | append (path.Base $dir) }}{{ end }}
+{{- with .Params.groups }}{{ $own = $own | append . }}{{ end }}
+{{- if $own }}{{ $keys = $keys | append $own }}{{ else }}{{ $ungrouped = $ungrouped | append . }}{{ end }}
+{{- end }}
+{{- $groups := slice }}
+{{- range uniq $keys }}
+{{- $native := (where $posts "File.Dir" "like" (printf "^posts/%s/" .)).ByDate }}
+{{- $members := (union $native (where $posts "Params.groups" "intersect" (slice .))).ByDate }}
+{{- $series := . | humanize | title }}
+{{- with $native }}
+{{- $first := index . 0 }}
+{{- $series = path.Base (path.Dir (strings.TrimSuffix "/" $first.File.Dir)) | humanize | title }}
+{{- $split := index (split $first.LinkTitle ", Part ") 0 }}
+{{- if ne $split $first.LinkTitle }}{{ $series = $split }}{{ end }}
+{{- with $first.Params.series }}{{ $series = . }}{{ end }}
+{{- end }}
+{{- range $acronyms }}{{ $series = replaceRE (printf `(?i)\b%s\b` .) . $series }}{{ end }}
+{{- $groups = $groups | append (dict "heading" $series "sort" (lower $series) "members" $members "prefix" (printf "%s, " $series)) }}
+{{- end }}
+{{- $groups = sort $groups "sort" }}
+{{- with $ungrouped }}
+{{- $groups = $groups | append (dict "heading" "Other posts" "members" . "prefix" "") }}
+{{- end }}
 <details class="post-tree">
   <summary>All posts</summary>
   <nav aria-label="All posts">
     <ul>
-      {{- range $posts.ByDate.Reverse }}
-      {{- $dir := strings.TrimSuffix "/" .File.Dir }}
-      {{- if eq .BundleType "leaf" }}{{ $dir = path.Dir $dir }}{{ end }}
-      {{- $keys := slice }}
-      {{- if ne $dir "posts" }}{{ $keys = $keys | append (path.Base $dir) }}{{ end }}
-      {{- with .Params.groups }}{{ $keys = $keys | append . }}{{ end }}
-      {{- if not $keys }}
-      <li{{ if eq .Permalink $current.Permalink }} class="active"{{ end }}>
-        <a href="{{ .RelPermalink }}"{{ if eq .Permalink $current.Permalink }} aria-current="page"{{ end }}>{{ .LinkTitle }}</a>
-      </li>
-      {{- end }}
-      {{- range $keys }}
-      {{- if not (in $seen .) }}
-      {{- $seen = $seen | append . }}
-      {{- $native := (where $posts "File.Dir" "like" (printf "^posts/%s/" .)).ByDate }}
-      {{- $members := (union $native (where $posts "Params.groups" "intersect" (slice .))).ByDate }}
-      {{- $series := . | humanize | title }}
-      {{- with $native }}
-      {{- $first := index . 0 }}
-      {{- $series = path.Base (path.Dir (strings.TrimSuffix "/" $first.File.Dir)) | humanize | title }}
-      {{- $split := index (split $first.LinkTitle ", Part ") 0 }}
-      {{- if ne $split $first.LinkTitle }}{{ $series = $split }}{{ end }}
-      {{- with $first.Params.series }}{{ $series = . }}{{ end }}
-      {{- end }}
-      {{- $open := in $members $current }}
+      {{- range $groups }}
+      {{- $prefix := .prefix }}
       <li class="series">
-        <details{{ if $open }} open{{ end }}>
-          <summary>{{ $series }}</summary>
+        <details{{ if in .members $current }} open{{ end }}>
+          <summary>{{ .heading }}</summary>
           <ul>
-            {{- range $members }}
+            {{- range .members }}
             {{- $label := .LinkTitle }}
-            {{- with strings.TrimPrefix (printf "%s, " $series) $label }}{{ $label = . }}{{ end }}
+            {{- with $prefix }}{{ with strings.TrimPrefix . $label }}{{ $label = . }}{{ end }}{{ end }}
             <li{{ if eq .Permalink $current.Permalink }} class="active"{{ end }}>
               <a href="{{ .RelPermalink }}"{{ if eq .Permalink $current.Permalink }} aria-current="page"{{ end }}>{{ $label }}</a>
             </li>
@@ -61,8 +71,6 @@
           </ul>
         </details>
       </li>
-      {{- end }}
-      {{- end }}
       {{- end }}
     </ul>
   </nav>
